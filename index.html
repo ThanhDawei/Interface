@@ -31,8 +31,63 @@
         overflow: hidden;
       }
 
-      .dashboard-container {
+      /* --- MÀN HÌNH ĐĂNG NHẬP --- */
+      .login-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary), var(--dark));
         display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      .login-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+      }
+      .login-card h1 {
+        margin-top: 0;
+        color: var(--primary);
+        margin-bottom: 5px;
+        font-size: 24px;
+      }
+      .login-card p {
+        color: #7f8c8d;
+        margin-bottom: 25px;
+        font-size: 14px;
+      }
+      .login-card input {
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 12px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 15px;
+        outline: none;
+      }
+      .login-card input:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      }
+      .login-card button {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      /* Dashboard ẩn mặc định */
+      .dashboard-container {
+        display: none;
         height: 100vh;
       }
       .sidebar {
@@ -253,7 +308,7 @@
       .modal {
         display: none;
         position: fixed;
-        z-index: 100;
+        z-index: 1000;
         left: 0;
         top: 0;
         width: 100%;
@@ -319,6 +374,100 @@
           transform: translateY(0);
           opacity: 1;
         }
+      }
+
+      /* --- BILL (HÓA ĐƠN) CSS --- */
+      .receipt-wrapper {
+        background: #f4f4f4;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+      }
+      .receipt-box {
+        font-family: "Courier New", Courier, monospace;
+        color: #000;
+        padding: 20px;
+        background: #fff;
+        width: 100%;
+        max-width: 320px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .receipt-box h3,
+      .receipt-box h4 {
+        text-align: center;
+        margin: 0 0 5px 0;
+      }
+      .receipt-box p {
+        text-align: center;
+        font-size: 12px;
+        margin: 0 0 10px 0;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 10px;
+      }
+      .receipt-table {
+        width: 100%;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .receipt-table th,
+      .receipt-table td {
+        padding: 4px 0;
+        border: none;
+        background: transparent;
+      }
+      .receipt-table th {
+        border-bottom: 1px dashed #000;
+        text-transform: none;
+      }
+      .receipt-footer {
+        border-top: 1px dashed #000;
+        padding-top: 10px;
+        font-size: 13px;
+      }
+      .receipt-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      .receipt-row.bold {
+        font-weight: bold;
+        font-size: 15px;
+        margin-top: 5px;
+        border-top: 1px dashed #000;
+        padding-top: 5px;
+      }
+
+      /* CSS Ẩn mọi thứ khi In, chỉ in Bill */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        .modal {
+          background: none;
+        }
+        #printArea,
+        #printArea * {
+          visibility: visible;
+        }
+        #printArea {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          display: flex;
+          justify-content: flex-start;
+          padding: 0;
+          margin: 0;
+        }
+        .receipt-box {
+          border: none;
+          box-shadow: none;
+          max-width: 80mm;
+          width: 100%;
+          padding: 0;
+        } /* Kích thước máy in nhiệt 80mm */
       }
 
       /* POS Layout */
@@ -432,7 +581,31 @@
     </style>
   </head>
   <body>
-    <div class="dashboard-container">
+    <div class="login-screen" id="loginScreen">
+      <div class="login-card">
+        <h1><i class="fas fa-store"></i> Đăng Nhập</h1>
+        <p>Hệ Thống Quản Lý Cửa Hàng F&B</p>
+        <form onsubmit="handleLogin(event)">
+          <input
+            type="text"
+            id="login_user"
+            placeholder="Tên đăng nhập (VD: admin)"
+            required
+          />
+          <input
+            type="password"
+            id="login_pass"
+            placeholder="Mật khẩu (VD: 123456)"
+            required
+          />
+          <button type="submit" class="btn-success">
+            <i class="fas fa-sign-in-alt"></i> Đăng Nhập Hệ Thống
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboardContainer">
       <div class="sidebar">
         <h2><i class="fas fa-store"></i> F&B MANAGER</h2>
         <div class="menu-item active" onclick="switchTab('tab-sales', this)">
@@ -456,12 +629,27 @@
         <div class="menu-item" onclick="switchTab('tab-promo', this)">
           <i class="fas fa-ticket-alt"></i>Voucher Khuyến mãi
         </div>
+        <div style="flex: 1"></div>
+        <div
+          class="menu-item"
+          onclick="handleLogout()"
+          style="
+            border-top: 1px solid var(--dark);
+            color: #e74c3c;
+            margin-bottom: 20px;
+          "
+        >
+          <i class="fas fa-power-off"></i> Đăng xuất
+        </div>
       </div>
 
       <div class="main-content">
         <div class="header">
           <h1 id="pageTitle">Bán hàng (POS)</h1>
-          <div><i class="fas fa-user-circle"></i> Xin chào, Quản lý!</div>
+          <div>
+            <i class="fas fa-user-circle"></i> Xin chào,
+            <span id="displayUserName">Quản lý</span>!
+          </div>
         </div>
 
         <div id="tab-sales" class="content-section active">
@@ -652,7 +840,7 @@
                   font-size: 16px;
                 "
               >
-                <i class="fas fa-check-circle"></i> XUẤT HÓA ĐƠN
+                <i class="fas fa-check-circle"></i> XÁC NHẬN THANH TOÁN
               </button>
             </div>
           </div>
@@ -1045,6 +1233,81 @@
       </div>
     </div>
 
+    <div id="modalReceipt" class="modal">
+      <div
+        class="modal-content"
+        style="max-width: 400px; background: transparent; box-shadow: none"
+      >
+        <div class="receipt-wrapper" id="printArea">
+          <div class="receipt-box">
+            <h3>CỬA HÀNG F&B MANAGER</h3>
+            <p>ĐC: 123 Đường ABC, Quận 1, TP.HCM<br />SĐT: 0123.456.789</p>
+            <h4>HÓA ĐƠN BÁN HÀNG</h4>
+            <p
+              style="
+                text-align: left;
+                padding-bottom: 0;
+                border: none;
+                margin-bottom: 5px;
+              "
+            >
+              Mã HĐ: <span id="billId"></span><br />
+              Ngày: <span id="billDate"></span><br />
+              Khu vực: <span id="billTable"></span><br />
+              Khách hàng: <span id="billCustomer"></span>
+            </p>
+            <table class="receipt-table">
+              <thead>
+                <tr>
+                  <th style="text-align: left">Tên món</th>
+                  <th style="text-align: center; width: 30px">SL</th>
+                  <th style="text-align: right">T.Tiền</th>
+                </tr>
+              </thead>
+              <tbody id="billItems"></tbody>
+            </table>
+            <div class="receipt-footer">
+              <div class="receipt-row">
+                <span>Cộng tiền hàng:</span><span id="billSubtotal">0 đ</span>
+              </div>
+              <div class="receipt-row">
+                <span>Khuyến mãi (<span id="billPromoCode"></span>):</span
+                ><span id="billDiscount">0 đ</span>
+              </div>
+              <div class="receipt-row bold">
+                <span>TỔNG THANH TOÁN:</span><span id="billTotal">0 đ</span>
+              </div>
+              <div
+                class="receipt-row"
+                style="margin-top: 10px; font-style: italic"
+              >
+                <span>Hình thức:</span><span id="billPayment"></span>
+              </div>
+            </div>
+            <p style="border: none; margin-top: 15px; font-weight: bold">
+              Cảm ơn quý khách và hẹn gặp lại!
+            </p>
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          style="
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+          "
+        >
+          <button type="button" class="btn-outline" onclick="closeReceipt()">
+            Đóng & Tạo đơn mới
+          </button>
+          <button type="button" class="btn-success" onclick="window.print()">
+            <i class="fas fa-print"></i> In Hóa Đơn
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div id="modalMenu" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1422,7 +1685,7 @@
     </div>
 
     <script>
-      // --- 1. KHỞI TẠO DB ---
+      // --- 1. KHỞI TẠO DB & LOGIN ---
       function initDB() {
         if (!localStorage.getItem("menuData"))
           localStorage.setItem(
@@ -1501,6 +1764,43 @@
           );
       }
 
+      // Logic Đăng nhập (Demo Login)
+      function handleLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById("login_user").value;
+        // Ở đây demo không check pass cứng để dễ trải nghiệm
+        if (user.trim() !== "") {
+          document.getElementById("loginScreen").style.display = "none";
+          document.getElementById("dashboardContainer").style.display = "flex";
+          document.getElementById("displayUserName").innerText = user;
+
+          // Khởi động dữ liệu khi vào dashboard
+          loadMenu();
+          loadStaff();
+          loadCustomer();
+          loadPromo();
+          loadInventory();
+          loadSupplier();
+          loadSpoilage();
+          loadPOSMenu();
+          loadRevenue();
+          drawCharts();
+          loadInventoryAlert();
+          loadSalaryTab();
+          loadShiftClose();
+        }
+      }
+
+      // Logic Đăng xuất
+      function handleLogout() {
+        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+          document.getElementById("dashboardContainer").style.display = "none";
+          document.getElementById("loginScreen").style.display = "flex";
+          document.getElementById("login_user").value = "";
+          document.getElementById("login_pass").value = "";
+        }
+      }
+
       // --- 2. GIAO DIỆN & TÌM KIẾM ---
       function filterTable(tableId, keyword) {
         let trs = document.getElementById(tableId).getElementsByTagName("tr");
@@ -1573,6 +1873,7 @@
           );
         }
       }
+
       function closeModal(modalId) {
         document.getElementById(modalId).classList.remove("active");
         const form = document.getElementById(modalId).querySelector("form");
@@ -1601,8 +1902,6 @@
 
       function loadPOSMenu() {
         const menu = JSON.parse(localStorage.getItem("menuData")) || [];
-
-        // Xử lý Danh mục
         const categories = [...new Set(menu.map((item) => item.category))];
         const catSelect = document.getElementById("pos_categorySelect");
         catSelect.innerHTML =
@@ -1637,7 +1936,6 @@
           selectedCat === "ALL"
             ? menu
             : menu.filter((m) => m.category === selectedCat);
-
         if (filteredMenu.length === 0) {
           select.innerHTML = '<option value="">(Không có món)</option>';
         } else {
@@ -1659,7 +1957,7 @@
         const found = customers.find((c) => c.phone === phone);
         if (found) {
           msg.style.color = "var(--success)";
-          msg.innerText = `👤 Khách: ${found.name} | Điểm: ${found.points || 0} | Hạng: ${found.tier || "Mới"}`;
+          msg.innerText = `👤 Khách: ${found.name} | Điểm: ${found.points || 0}`;
         } else {
           msg.style.color = "var(--warning)";
           msg.innerText = `✨ Khách mới: Sẽ tự tạo hồ sơ D3 khi thanh toán.`;
@@ -1692,6 +1990,7 @@
             nameHTML: itemName,
             plainName: `${item.name} (${selectedSize}) + ${toppings.join(",")}`,
             qty: qty,
+            priceUnit: finalUnitPrice,
             total: finalUnitPrice * qty,
           });
           renderCart();
@@ -1811,10 +2110,13 @@
           loadCustomer();
         }
 
+        // Lưu lịch sử
         const sales = JSON.parse(localStorage.getItem("salesData")) || [];
+        const billId = generateID("HD");
+        const billDate = new Date().toLocaleString();
         sales.push({
-          id: generateID("HD"),
-          date: new Date().toLocaleString(),
+          id: billId,
+          date: billDate,
           table: tableArea,
           customerName: customerName,
           payment: paymentMethod,
@@ -1825,10 +2127,47 @@
         });
         localStorage.setItem("salesData", JSON.stringify(sales));
 
-        alert(
-          `THANH TOÁN THÀNH CÔNG!\nBàn/Khu vực: ${tableArea}\n${earnedPoints > 0 ? `+${earnedPoints} điểm thưởng` : ""}`,
+        // XUẤT HÓA ĐƠN RA POPUP TRƯỚC KHI CLEAR
+        showReceiptModal(
+          billId,
+          billDate,
+          tableArea,
+          customerName,
+          currentCart,
+          details,
+          paymentMethod,
         );
+      }
 
+      // POPUP IN HÓA ĐƠN
+      function showReceiptModal(id, date, table, cust, cart, details, pay) {
+        document.getElementById("billId").innerText = id;
+        document.getElementById("billDate").innerText = date;
+        document.getElementById("billTable").innerText = table;
+        document.getElementById("billCustomer").innerText = cust;
+
+        let tbody = document.getElementById("billItems");
+        tbody.innerHTML = "";
+        cart.forEach((item) => {
+          tbody.innerHTML += `<tr><td style="text-align:left">${item.plainName.split("(")[0]}<br><small style="color:#555">(${item.plainName.split("(")[1] || ""}</small></td><td style="text-align:center">${item.qty}</td><td style="text-align:right">${item.total.toLocaleString()}</td></tr>`;
+        });
+
+        document.getElementById("billSubtotal").innerText =
+          details.subtotal.toLocaleString() + " đ";
+        document.getElementById("billPromoCode").innerText =
+          details.promoCode || "Không";
+        document.getElementById("billDiscount").innerText =
+          "-" + details.discountAmount.toLocaleString() + " đ";
+        document.getElementById("billTotal").innerText =
+          details.grandTotal.toLocaleString() + " đ";
+        document.getElementById("billPayment").innerText = pay;
+
+        openModal("modalReceipt");
+      }
+
+      function closeReceipt() {
+        closeModal("modalReceipt");
+        // Sau khi tắt bill mới làm sạch POS
         currentCart = [];
         appliedPromoObj = null;
         document.getElementById("pos_qty").value = 1;
@@ -2000,7 +2339,7 @@
         openModal("modalStaff");
       }
 
-      // --- CẬP NHẬT: GỠ BỎ NÚT XÓA Ở BẢNG KHÁCH HÀNG ---
+      // MỤC KHÁCH HÀNG (ĐÃ BỎ XÓA, CHỈ CÒN SỬA)
       function loadCustomer() {
         loadTable(
           "customerData",
@@ -2009,7 +2348,6 @@
             `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td><span style="color:var(--danger); font-weight:bold">${item.points || 0}</span></td><td><span class="badge ${item.tier === "Kim Cương" ? "bg-purple" : item.tier === "Vàng" ? "bg-warning" : "bg-primary"}">${item.tier || "Bạc"}</span></td><td><button class="btn-warning btn-sm" onclick="editCustomer('${item.id}')"><i class="fas fa-pen"></i> Sửa</button></td></tr>`,
         );
       }
-
       function saveCustomer(e) {
         e.preventDefault();
         let data = JSON.parse(localStorage.getItem("customerData")) || [];
@@ -2030,7 +2368,6 @@
         closeModal("modalCustomer");
         loadCustomer();
       }
-
       function editCustomer(id) {
         const data = JSON.parse(localStorage.getItem("customerData")).find(
           (i) => i.id === id,
@@ -2232,7 +2569,6 @@
           if (storageKey === "staffData") {
             loadStaff();
           }
-          // Đã bỏ storageKey==='customerData' ra khỏi hàm xóa
           if (storageKey === "promoData") loadPromo();
           if (storageKey === "inventoryData") loadInventory();
           if (storageKey === "shiftData") loadSalaryTab();
@@ -2240,21 +2576,8 @@
         }
       }
 
-      // Khởi động
+      // Khởi động DB trước để màn hình POS có dữ liệu khi đăng nhập vào
       initDB();
-      loadMenu();
-      loadStaff();
-      loadCustomer();
-      loadPromo();
-      loadInventory();
-      loadSupplier();
-      loadSpoilage();
-      loadPOSMenu();
-      loadRevenue();
-      drawCharts();
-      loadInventoryAlert();
-      loadSalaryTab();
-      loadShiftClose();
     </script>
   </body>
 </html>
