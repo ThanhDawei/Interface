@@ -450,9 +450,6 @@
         <div class="menu-item" onclick="switchTab('tab-staff', this)">
           <i class="fas fa-id-badge"></i>Quản lý Nhân sự
         </div>
-        <div class="menu-item" onclick="switchTab('tab-salary', this)">
-          <i class="fas fa-clock"></i>Ca làm & Tiền lương
-        </div>
         <div class="menu-item" onclick="switchTab('tab-customer', this)">
           <i class="fas fa-users"></i>Quản lý Khách hàng
         </div>
@@ -1174,6 +1171,7 @@
         </form>
       </div>
     </div>
+
     <div id="modalPromo" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1537,7 +1535,7 @@
         if (tabId === "tab-staff") {
           loadStaff();
           loadShiftClose();
-        } // Fix lỗi không load bảng chốt ca
+        }
         if (tabId === "tab-inventory") {
           loadInventory();
           loadSupplier();
@@ -1597,14 +1595,14 @@
         });
       }
 
-      // --- 4. BÁN HÀNG (POS) TÍCH HỢP BỘ LỌC 2 LỚP ---
+      // --- 4. BÁN HÀNG (POS) ---
       let currentCart = [];
       let appliedPromoObj = null;
 
       function loadPOSMenu() {
         const menu = JSON.parse(localStorage.getItem("menuData")) || [];
 
-        // Xử lý Danh mục trước
+        // Xử lý Danh mục
         const categories = [...new Set(menu.map((item) => item.category))];
         const catSelect = document.getElementById("pos_categorySelect");
         catSelect.innerHTML =
@@ -1613,7 +1611,6 @@
           catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
 
-        // Tải danh sách món theo danh mục mặc định
         filterPosMenu();
 
         document.querySelector('input[name="pos_size"][value="M"]').checked =
@@ -1630,7 +1627,6 @@
         renderCart();
       }
 
-      // Hàm lọc món theo danh mục
       function filterPosMenu() {
         const menu = JSON.parse(localStorage.getItem("menuData")) || [];
         const selectedCat = document.getElementById("pos_categorySelect").value;
@@ -1844,7 +1840,7 @@
         loadPOSMenu();
       }
 
-      // --- 5. BÁO CÁO & BIỂU ĐỒ (CHART.JS CỐ ĐỊNH KÍCH THƯỚC) ---
+      // --- 5. BÁO CÁO & BIỂU ĐỒ ---
       let myRevenueChart = null;
       function drawCharts() {
         const sales = JSON.parse(localStorage.getItem("salesData")) || [];
@@ -1874,7 +1870,7 @@
               },
             ],
           },
-          options: { responsive: true, maintainAspectRatio: false }, // Đã cố định nhờ thẻ div cha
+          options: { responsive: true, maintainAspectRatio: false },
         });
       }
 
@@ -2004,27 +2000,47 @@
         openModal("modalStaff");
       }
 
+      // --- CẬP NHẬT: GỠ BỎ NÚT XÓA Ở BẢNG KHÁCH HÀNG ---
       function loadCustomer() {
         loadTable(
           "customerData",
           "customerTableBody",
           (item) =>
-            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td><span style="color:var(--danger); font-weight:bold">${item.points || 0}</span></td><td><span class="badge ${item.tier === "Kim Cương" ? "bg-purple" : item.tier === "Vàng" ? "bg-warning" : "bg-primary"}">${item.tier || "Bạc"}</span></td><td><button class="btn-danger btn-sm" onclick="deleteItem('customerData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td><span style="color:var(--danger); font-weight:bold">${item.points || 0}</span></td><td><span class="badge ${item.tier === "Kim Cương" ? "bg-purple" : item.tier === "Vàng" ? "bg-warning" : "bg-primary"}">${item.tier || "Bạc"}</span></td><td><button class="btn-warning btn-sm" onclick="editCustomer('${item.id}')"><i class="fas fa-pen"></i> Sửa</button></td></tr>`,
         );
       }
+
       function saveCustomer(e) {
         e.preventDefault();
         let data = JSON.parse(localStorage.getItem("customerData")) || [];
-        data.push({
-          id: generateID("KH"),
-          name: document.getElementById("c_name").value,
-          phone: document.getElementById("c_phone").value,
-          points: 0,
-          tier: "Bạc",
-        });
+        if (editCustId) {
+          const idx = data.findIndex((i) => i.id === editCustId);
+          data[idx].name = document.getElementById("c_name").value;
+          data[idx].phone = document.getElementById("c_phone").value;
+        } else {
+          data.push({
+            id: generateID("KH"),
+            name: document.getElementById("c_name").value,
+            phone: document.getElementById("c_phone").value,
+            points: 0,
+            tier: "Bạc",
+          });
+        }
         localStorage.setItem("customerData", JSON.stringify(data));
         closeModal("modalCustomer");
         loadCustomer();
+      }
+
+      function editCustomer(id) {
+        const data = JSON.parse(localStorage.getItem("customerData")).find(
+          (i) => i.id === id,
+        );
+        document.getElementById("c_name").value = data.name;
+        document.getElementById("c_phone").value = data.phone;
+        editCustId = id;
+        document.getElementById("modalCustTitle").innerText =
+          "Cập nhật Khách hàng";
+        openModal("modalCustomer");
       }
 
       function loadPromo() {
@@ -2133,7 +2149,6 @@
         }
       }
 
-      // --- CẬP NHẬT: TÁCH RIÊNG LOAD BẢNG LƯƠNG VÀ BẢNG CHỐT CA ---
       function loadSalaryTab() {
         loadTable(
           "shiftData",
@@ -2217,10 +2232,7 @@
           if (storageKey === "staffData") {
             loadStaff();
           }
-          if (storageKey === "customerData") {
-            loadCustomer();
-            loadPOSMenu();
-          }
+          // Đã bỏ storageKey==='customerData' ra khỏi hàm xóa
           if (storageKey === "promoData") loadPromo();
           if (storageKey === "inventoryData") loadInventory();
           if (storageKey === "shiftData") loadSalaryTab();
@@ -2242,7 +2254,7 @@
       drawCharts();
       loadInventoryAlert();
       loadSalaryTab();
-      loadShiftClose(); // Tải sẵn dữ liệu chốt ca ngầm
+      loadShiftClose();
     </script>
   </body>
 </html>
