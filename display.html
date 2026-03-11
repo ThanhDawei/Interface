@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Màn Hình Khách Hàng</title>
+    <style>
+      :root {
+        --primary: #2c3e50;
+        --danger: #e74c3c;
+        --success: #2ecc71;
+        --bg: #f4f7f6;
+      }
+      * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        margin: 0;
+        background-color: var(--bg);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Cột trái: Danh sách món */
+      .cart-panel {
+        flex: 6;
+        background: white;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        border-right: 2px solid #ddd;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+      }
+      .cart-panel h1 {
+        margin-top: 0;
+        color: var(--primary);
+        font-size: 32px;
+        border-bottom: 3px solid var(--primary);
+        padding-bottom: 15px;
+      }
+
+      .order-list {
+        flex: 1;
+        overflow-y: auto;
+        margin-top: 20px;
+      }
+      .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px dashed #ccc;
+        font-size: 24px;
+      }
+      .item-details {
+        flex: 1;
+      }
+      .item-name {
+        font-weight: bold;
+        color: #333;
+      }
+      .item-qty {
+        font-weight: bold;
+        color: var(--primary);
+        margin: 0 20px;
+        background: #ecf0f1;
+        padding: 5px 15px;
+        border-radius: 8px;
+      }
+      .item-price {
+        font-weight: bold;
+        color: #555;
+        width: 150px;
+        text-align: right;
+      }
+
+      /* Cột phải: Thanh toán & QR */
+      .pay-panel {
+        flex: 4;
+        background: var(--primary);
+        color: white;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .total-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 15px;
+        width: 100%;
+        margin-bottom: 30px;
+      }
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #ddd;
+      }
+      .grand-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 36px;
+        font-weight: bold;
+        color: var(--success);
+        margin-top: 20px;
+        border-top: 2px solid rgba(255, 255, 255, 0.2);
+        padding-top: 20px;
+      }
+
+      /* Khu vực QR Code */
+      .qr-container {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        display: none; /* Ẩn mặc định */
+        animation: fadeIn 0.5s ease;
+      }
+      .qr-container h3 {
+        margin: 0 0 15px 0;
+        color: var(--primary);
+        font-size: 24px;
+      }
+      .qr-container img {
+        width: 250px;
+        height: 250px;
+        border: 1px solid #eee;
+        padding: 10px;
+        border-radius: 10px;
+      }
+      .qr-container p {
+        color: #e74c3c;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 15px 0 0 0;
+      }
+
+      /* Màn hình chờ */
+      .idle-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        z-index: 10;
+        transition: opacity 0.3s;
+      }
+      .idle-screen h1 {
+        font-size: 60px;
+        margin-bottom: 10px;
+        color: var(--success);
+      }
+      .idle-screen p {
+        font-size: 24px;
+        color: #bdc3c7;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="idle-screen" id="idleScreen">
+      <h1>XIN CHÀO QUÝ KHÁCH!</h1>
+      <p>Vui lòng gọi món tại quầy thu ngân</p>
+    </div>
+
+    <div class="cart-panel">
+      <h1>Đơn Hàng Của Bạn</h1>
+      <div class="order-list" id="displayList"></div>
+    </div>
+
+    <div class="pay-panel">
+      <div class="total-box">
+        <div class="total-row">
+          <span>Tạm tính:</span> <span id="displaySubtotal">0 đ</span>
+        </div>
+        <div class="total-row">
+          <span>Giảm giá:</span>
+          <span id="displayDiscount" style="color: #e74c3c">0 đ</span>
+        </div>
+        <div class="grand-total">
+          <span>TỔNG TIỀN:</span> <span id="displayTotal">0 đ</span>
+        </div>
+      </div>
+
+      <div class="qr-container" id="qrBlock">
+        <h3>Quét mã để thanh toán</h3>
+        <img
+          src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=Thanh+Toan+Don+Hang&color=2c3e50"
+          alt="QR Code"
+        />
+        <p>Vui lòng giữ nguyên màn hình sau khi quét</p>
+      </div>
+    </div>
+
+    <script>
+      // Hàm cập nhật giao diện
+      function updateDisplay() {
+        const dataStr = localStorage.getItem("livePosData");
+        const idleScreen = document.getElementById("idleScreen");
+
+        if (!dataStr) {
+          idleScreen.style.display = "flex";
+          return;
+        }
+
+        const data = JSON.parse(dataStr);
+
+        // Nếu giỏ hàng trống, hiện màn hình chào
+        if (!data.cart || data.cart.length === 0) {
+          idleScreen.style.display = "flex";
+          return;
+        }
+
+        // Có món -> Ẩn màn hình chào, vẽ danh sách món
+        idleScreen.style.display = "none";
+        const tbody = document.getElementById("displayList");
+        tbody.innerHTML = "";
+
+        data.cart.forEach((item) => {
+          tbody.innerHTML += `
+                    <div class="order-item">
+                        <div class="item-details"><div class="item-name">${item.nameHTML}</div></div>
+                        <div class="item-qty">x${item.qty}</div>
+                        <div class="item-price">${item.total.toLocaleString()} đ</div>
+                    </div>
+                `;
+        });
+
+        // Cập nhật giá tiền
+        document.getElementById("displaySubtotal").innerText =
+          data.subtotal.toLocaleString() + " đ";
+        document.getElementById("displayDiscount").innerText =
+          (data.discount > 0 ? "-" : "") +
+          data.discount.toLocaleString() +
+          " đ";
+        document.getElementById("displayTotal").innerText =
+          data.total.toLocaleString() + " đ";
+
+        // Xử lý hiển thị QR Code nếu chọn Chuyển khoản
+        const qrBlock = document.getElementById("qrBlock");
+        if (data.payment === "Chuyển khoản") {
+          qrBlock.style.display = "block";
+        } else {
+          qrBlock.style.display = "none";
+        }
+      }
+
+      // Lắng nghe sự thay đổi của LocalStorage từ tab/cửa sổ khác
+      window.addEventListener("storage", function (e) {
+        if (e.key === "livePosData") {
+          updateDisplay();
+        }
+      });
+
+      // Chạy lần đầu khi vừa mở web
+      updateDisplay();
+    </script>
+  </body>
+</html>
