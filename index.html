@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hệ Thống Quản Lý Cửa Hàng Toàn Diện</title>
+    <title>Hệ Thống Quản Lý Cửa Hàng F&B (Hoàn Chỉnh DFD/RDM)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
       :root {
         --primary: #2c3e50;
@@ -13,6 +18,7 @@
         --success: #2ecc71;
         --purple: #9b59b6;
         --light: #ecf0f1;
+        --dark: #34495e;
       }
       * {
         box-sizing: border-box;
@@ -22,9 +28,9 @@
         margin: 0;
         background-color: #f4f7f6;
         color: #333;
+        overflow: hidden;
       }
 
-      /* Layout Tổng quan */
       .dashboard-container {
         display: flex;
         height: 100vh;
@@ -35,107 +41,171 @@
         color: white;
         display: flex;
         flex-direction: column;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        z-index: 10;
         overflow-y: auto;
       }
       .sidebar h2 {
         text-align: center;
         padding: 20px 0;
-        border-bottom: 1px solid #34495e;
+        border-bottom: 1px solid var(--dark);
         margin: 0;
-        font-size: 18px;
+        font-size: 17px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
       .menu-item {
         padding: 15px 20px;
-        color: white;
+        color: #bdc3c7;
         text-decoration: none;
-        border-bottom: 1px solid #34495e;
+        border-bottom: 1px solid var(--dark);
         cursor: pointer;
         transition: 0.3s;
-        font-size: 15px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
       .menu-item:hover,
       .menu-item.active {
-        background: #34495e;
+        background: var(--dark);
+        color: white;
         border-left: 4px solid var(--secondary);
       }
 
       .main-content {
         flex: 1;
-        padding: 30px;
+        padding: 20px 30px;
         overflow-y: auto;
+        background-color: #f8f9fa;
       }
       .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--light);
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        color: var(--primary);
       }
 
-      /* UI Components */
       .card {
         background: white;
         padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
       }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .card-header h3 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 18px;
+      }
+
       .form-group {
         display: flex;
-        gap: 10px;
+        gap: 15px;
         margin-bottom: 15px;
         flex-wrap: wrap;
         align-items: center;
       }
+      .form-control {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 150px;
+      }
+      .form-control label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 13px;
+        color: #555;
+      }
       input[type="text"],
       input[type="number"],
       input[type="date"],
-      select {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        flex: 1;
-        min-width: 150px;
+      select,
+      textarea {
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        outline: none;
+        transition: 0.2s;
+        font-family: inherit;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
       }
 
       .search-box {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #3498db;
-        border-radius: 4px;
+        padding: 12px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
         margin-bottom: 15px;
-        font-weight: bold;
+        font-size: 14px;
+        background: #f8f9fa;
       }
 
       button {
-        padding: 10px 15px;
+        padding: 10px 20px;
         background: var(--secondary);
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
         font-weight: bold;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
       }
       button:hover {
         background: #2980b9;
+        transform: translateY(-1px);
       }
       .btn-danger {
         background: var(--danger);
       }
+      .btn-danger:hover {
+        background: #c0392b;
+      }
       .btn-warning {
         background: var(--warning);
-        margin-right: 5px;
+      }
+      .btn-warning:hover {
+        background: #d35400;
       }
       .btn-success {
         background: var(--success);
-        width: 100%;
-        margin-top: 10px;
-        font-size: 16px;
       }
-      .btn-cancel {
-        background: #95a5a6;
-        display: none;
+      .btn-success:hover {
+        background: #27ae60;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid #ccc;
+        color: #333;
+      }
+      .btn-outline:hover {
+        background: #eee;
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
       }
 
       table {
@@ -145,49 +215,143 @@
       }
       th,
       td {
-        padding: 12px;
+        padding: 12px 15px;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 14px;
       }
       th {
-        background-color: var(--light);
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+      tbody tr:hover {
+        background-color: #f8f9fa;
       }
 
       .content-section {
         display: none;
+        animation: fadeIn 0.4s ease;
       }
       .content-section.active {
         display: block;
       }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-      /* Phân hệ POS */
+      /* POPUP MODAL */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(3px);
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background-color: #fff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        animation: slideDown 0.3s ease;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+      }
+      .modal-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--primary);
+      }
+      .close-btn {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+      }
+      .close-btn:hover {
+        color: #333;
+      }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-top: 20px;
+      }
+      @keyframes slideDown {
+        from {
+          transform: translateY(-30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* POS Layout */
       .pos-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr;
+        grid-template-columns: 1.8fr 1.2fr;
         gap: 20px;
       }
       .total-box {
-        font-size: 16px;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
         text-align: right;
-        padding: 15px 0;
-        line-height: 1.6;
+        line-height: 1.8;
+        font-size: 15px;
+        margin: 15px 0;
+        border: 1px solid #eee;
       }
       .total-box .grand-total {
         font-size: 24px;
         font-weight: bold;
         color: var(--danger);
         display: block;
-        margin-top: 5px;
-        border-top: 2px solid #eee;
+        margin-top: 10px;
+        border-top: 2px dashed #ccc;
         padding-top: 10px;
       }
-      .checkout-options,
-      .topping-options {
-        background: #f9f9f9;
+      .options-box {
+        background: #fff;
+        border: 1px solid #e9ecef;
         padding: 15px;
-        border-radius: 5px;
+        border-radius: 8px;
         margin-bottom: 15px;
-        border: 1px dashed #ccc;
       }
       .radio-group,
       .checkbox-group {
@@ -196,11 +360,8 @@
         margin-top: 5px;
         flex-wrap: wrap;
       }
-      label {
-        cursor: pointer;
-      }
 
-      /* Thẻ thống kê */
+      /* Stats Layout */
       .summary-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -208,123 +369,163 @@
         margin-bottom: 20px;
       }
       .summary-card {
-        padding: 20px;
-        border-radius: 8px;
+        padding: 25px;
+        border-radius: 10px;
         color: white;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
       }
       .summary-card h3 {
         margin: 0 0 10px 0;
-        font-size: 16px;
+        font-size: 15px;
+        font-weight: 500;
         opacity: 0.9;
       }
       .summary-card h2 {
         margin: 0;
         font-size: 28px;
+        font-weight: 700;
+      }
+      .summary-card i {
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        font-size: 80px;
+        opacity: 0.2;
       }
       .bg-success {
-        background: var(--success);
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
       }
       .bg-purple {
-        background: var(--purple);
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
       }
       .bg-warning {
-        background: var(--warning);
+        background: linear-gradient(135deg, #f39c12, #d35400);
+      }
+      .bg-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+      }
+      .bg-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+      }
+
+      .split-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        color: white;
+      }
+      .badge-danger {
+        background: var(--danger);
+      }
+      .badge-success {
+        background: var(--success);
       }
     </style>
   </head>
   <body>
     <div class="dashboard-container">
       <div class="sidebar">
-        <h2>HỆ THỐNG CỬA HÀNG</h2>
+        <h2><i class="fas fa-store"></i> F&B MANAGER</h2>
         <div class="menu-item active" onclick="switchTab('tab-sales', this)">
-          1. Bán hàng & Phục vụ
+          <i class="fas fa-cash-register"></i>Bán hàng (POS)
         </div>
-        <div class="menu-item" onclick="switchTab('tab-revenue', this)">
-          2. Doanh thu & Hóa đơn
-        </div>
-        <div class="menu-item" onclick="switchTab('tab-promo', this)">
-          3. Quản lý Khuyến mãi
+        <div class="menu-item" onclick="switchTab('tab-report', this)">
+          <i class="fas fa-chart-pie"></i>Báo cáo Thống kê
         </div>
         <div class="menu-item" onclick="switchTab('tab-menu', this)">
-          4. Quản lý Thực đơn
-        </div>
-        <div class="menu-item" onclick="switchTab('tab-staff', this)">
-          5. Quản lý Nhân sự
-        </div>
-        <div class="menu-item" onclick="switchTab('tab-salary', this)">
-          6. Ca làm & Tiền lương
-        </div>
-        <div class="menu-item" onclick="switchTab('tab-customer', this)">
-          7. Quản lý Khách hàng
+          <i class="fas fa-utensils"></i>Quản lý Thực đơn
         </div>
         <div class="menu-item" onclick="switchTab('tab-inventory', this)">
-          8. Nhập kho & Nguyên liệu
+          <i class="fas fa-warehouse"></i>Quản lý Kho vật tư
         </div>
-        <div class="menu-item" onclick="switchTab('tab-spoilage', this)">
-          9. Xuất hủy / Trả hàng
+        <div class="menu-item" onclick="switchTab('tab-staff', this)">
+          <i class="fas fa-id-badge"></i>Quản lý Nhân sự
+        </div>
+        <div class="menu-item" onclick="switchTab('tab-salary', this)">
+          <i class="fas fa-clock"></i>Ca làm & Tiền lương
+        </div>
+        <div class="menu-item" onclick="switchTab('tab-customer', this)">
+          <i class="fas fa-users"></i>Quản lý Khách hàng
+        </div>
+        <div class="menu-item" onclick="switchTab('tab-promo', this)">
+          <i class="fas fa-ticket-alt"></i>Voucher Khuyến mãi
         </div>
       </div>
 
       <div class="main-content">
         <div class="header">
-          <h1 id="pageTitle">Bán hàng & Phục vụ</h1>
-          <div>Xin chào, Quản lý!</div>
+          <h1 id="pageTitle">Bán hàng (POS)</h1>
+          <div><i class="fas fa-user-circle"></i> Xin chào, Quản lý!</div>
         </div>
 
         <div id="tab-sales" class="content-section active">
           <div class="pos-grid">
             <div>
               <div class="card">
-                <h3>Thêm Món Vào Order</h3>
-                <div class="form-group" style="align-items: flex-end">
-                  <div style="flex: 1">
-                    <label><b>Chọn món:</b></label>
+                <div class="card-header">
+                  <h3 style="margin: 0">
+                    <i class="fas fa-concierge-bell"></i> Tiếp nhận Order (D2.1)
+                  </h3>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-control" style="flex: 1.2">
+                    <label>1. Chọn Danh mục:</label>
                     <select
-                      id="pos_menuSelect"
-                      style="width: 100%; margin-top: 5px"
+                      id="pos_categorySelect"
+                      onchange="filterPosMenu()"
                     ></select>
                   </div>
-                  <div style="flex: 0.3">
-                    <label><b>SL:</b></label>
-                    <input
-                      type="number"
-                      id="pos_qty"
-                      value="1"
-                      min="1"
-                      style="width: 100%; margin-top: 5px"
-                    />
+                  <div class="form-control" style="flex: 1.5">
+                    <label>2. Chọn Món:</label>
+                    <select id="pos_menuSelect"></select>
+                  </div>
+                  <div class="form-control" style="flex: 0.5">
+                    <label>SL:</label
+                    ><input type="number" id="pos_qty" value="1" min="1" />
                   </div>
                 </div>
 
-                <div class="topping-options">
-                  <b>Chọn Size:</b>
+                <div class="options-box">
+                  <label style="font-weight: bold; color: var(--primary)"
+                    >Biến thể Size:</label
+                  >
                   <div class="radio-group">
                     <label
-                      ><input type="radio" name="pos_size" value="S" /> Size S
+                      ><input type="radio" name="pos_size" value="S" /> S
                       (-10%)</label
                     >
                     <label
                       ><input type="radio" name="pos_size" value="M" checked />
-                      Size M (Chuẩn)</label
+                      M (Gốc)</label
                     >
                     <label
-                      ><input type="radio" name="pos_size" value="L" /> Size L
+                      ><input type="radio" name="pos_size" value="L" /> L
                       (+20%)</label
                     >
                   </div>
-                  <hr style="border: 0.5px solid #eee; margin: 15px 0" />
-                  <b>Thêm Topping:</b>
+                  <hr style="border: 0.5px solid #eee; margin: 10px 0" />
+                  <label style="font-weight: bold; color: var(--primary)"
+                    >Topping (D2.1):</label
+                  >
                   <div class="checkbox-group">
                     <label
                       ><input
                         type="checkbox"
                         class="pos_topping"
-                        value="Trân châu đen"
+                        value="Trân châu"
                         data-price="5000"
                       />
-                      Trân châu đen (+5k)</label
+                      Trân châu (+5k)</label
                     >
                     <label
                       ><input
@@ -344,131 +545,180 @@
                       />
                       Kem Cheese (+10k)</label
                     >
-                    <label
-                      ><input
-                        type="checkbox"
-                        class="pos_topping"
-                        value="Hạt sen"
-                        data-price="8000"
-                      />
-                      Hạt sen (+8k)</label
-                    >
                   </div>
                 </div>
-                <button onclick="addToCart()" style="width: 100%">
-                  THÊM VÀO GIỎ HÀNG
+                <button
+                  onclick="addToCart()"
+                  style="width: 100%; justify-content: center; font-size: 15px"
+                >
+                  <i class="fas fa-cart-plus"></i> THÊM VÀO HÓA ĐƠN
                 </button>
               </div>
             </div>
-            <div class="card">
-              <h3>Giỏ hàng hiện tại</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Món & Tùy chọn</th>
-                    <th>SL</th>
-                    <th>Thành Tiền</th>
-                  </tr>
-                </thead>
-                <tbody id="cartTableBody"></tbody>
-              </table>
 
-              <div class="checkout-options" style="margin-top: 15px">
-                <label
-                  style="font-weight: bold; display: block; margin-bottom: 5px"
-                  >Mã Khuyến Mãi:</label
-                >
+            <div class="card" style="display: flex; flex-direction: column">
+              <div class="card-header">
+                <h3 style="margin: 0">
+                  <i class="fas fa-receipt"></i> Phiếu Thanh Toán
+                </h3>
+              </div>
+              <div
+                style="
+                  flex: 1;
+                  overflow-y: auto;
+                  border: 1px solid #eee;
+                  border-radius: 8px;
+                  padding: 10px;
+                  margin-bottom: 10px;
+                  background: #fdfdfd;
+                  min-height: 150px;
+                "
+              >
+                <table style="margin-top: 0">
+                  <tbody id="cartTableBody"></tbody>
+                </table>
+              </div>
+
+              <div
+                class="options-box"
+                style="padding: 10px; margin-bottom: 10px"
+              >
                 <div style="display: flex; gap: 10px">
                   <input
                     type="text"
                     id="pos_promoCode"
-                    placeholder="Nhập mã (VD: GIAM10K)"
+                    placeholder="Mã Khuyến Mãi..."
+                    style="flex: 1; padding: 8px"
                   />
-                  <button
-                    onclick="applyPromo()"
-                    style="width: auto; background: var(--purple)"
-                  >
+                  <button onclick="applyPromo()" class="btn-warning btn-sm">
                     Áp dụng
                   </button>
                 </div>
                 <div
                   id="promoMessage"
-                  style="font-size: 13px; margin-top: 5px; font-weight: bold"
+                  style="font-size: 12px; margin-top: 5px; font-weight: bold"
+                ></div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 5px">
+                <div class="form-control">
+                  <select id="pos_tableSelect" style="padding: 8px">
+                    <option value="Mang đi">🛒 Mang đi (Takeaway)</option>
+                    <option value="Bàn 01">🍽️ Bàn 01 (Khu A)</option>
+                    <option value="Bàn 02">🍽️ Bàn 02 (Khu A)</option>
+                    <option value="Bàn VIP">💎 Bàn VIP (Khu B)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-control" style="margin-bottom: 5px">
+                <input
+                  type="text"
+                  id="pos_customerPhone"
+                  placeholder="SĐT Khách Hàng (Tích điểm D3)"
+                  oninput="checkCustomerPhone()"
+                  style="padding: 8px"
+                />
+                <div
+                  id="customerMessage"
+                  style="font-size: 12px; margin-top: 5px; font-weight: bold"
                 ></div>
               </div>
 
               <div class="total-box">
-                Tạm tính: <span id="cartSubtotal">0</span> đ<br />
-                Giảm giá:
+                Tổng tiền món: <span id="cartSubtotal">0</span> đ<br />
+                Giảm giá (Voucher):
                 <span id="cartDiscount" style="color: var(--success)">0</span>
                 đ<br />
                 <span class="grand-total"
-                  >Tổng TT: <span id="cartTotal">0</span> đ</span
-                >
-              </div>
-
-              <div class="checkout-options">
-                <label
-                  style="font-weight: bold; display: block; margin-bottom: 5px"
-                  >Khách hàng (Tích điểm 1đ = 10k):</label
-                >
-                <input
-                  type="text"
-                  id="pos_customerPhone"
-                  placeholder="Nhập SĐT khách (Bỏ trống = Khách lẻ)"
-                  style="width: 100%; margin-bottom: 5px"
-                  oninput="checkCustomerPhone()"
-                />
-                <div
-                  id="customerMessage"
-                  style="
-                    font-size: 13px;
-                    margin-bottom: 10px;
-                    font-weight: bold;
-                  "
-                ></div>
-
-                <label
-                  style="font-weight: bold; display: block; margin-bottom: 5px"
-                  >Thanh toán:</label
+                  >THÀNH TIỀN: <span id="cartTotal">0</span> đ</span
                 >
                 <select
                   id="pos_paymentMethod"
-                  style="width: 100%"
                   onchange="syncToDisplay()"
+                  style="width: 100%; margin-top: 10px; padding: 8px"
                 >
-                  <option value="Tiền mặt">Tiền mặt</option>
-                  <option value="Chuyển khoản">Chuyển khoản / Thẻ</option>
+                  <option value="Tiền mặt">💵 Thanh toán: Tiền mặt</option>
+                  <option value="Chuyển khoản">
+                    💳 Thanh toán: Chuyển khoản (QR)
+                  </option>
                 </select>
               </div>
 
-              <button class="btn-success" onclick="checkout()">
-                THANH TOÁN & LƯU HÓA ĐƠN
+              <button
+                class="btn-success"
+                onclick="checkout()"
+                style="
+                  width: 100%;
+                  justify-content: center;
+                  padding: 15px;
+                  font-size: 16px;
+                "
+              >
+                <i class="fas fa-check-circle"></i> XUẤT HÓA ĐƠN
               </button>
             </div>
           </div>
         </div>
 
-        <div id="tab-revenue" class="content-section">
+        <div id="tab-report" class="content-section">
           <div class="summary-grid">
-            <div class="summary-card bg-success">
+            <div class="summary-card bg-primary">
               <h3>Tổng Doanh Thu</h3>
-              <h2 id="revTotal">0 đ</h2>
+              <h2 id="repTotal">0 đ</h2>
+              <i class="fas fa-wallet"></i>
             </div>
-            <div class="summary-card bg-purple">
-              <h3>Tổng Số Hóa Đơn</h3>
-              <h2 id="revCount">0</h2>
+            <div class="summary-card bg-success">
+              <h3>Tổng Hóa Đơn</h3>
+              <h2 id="repCount">0</h2>
+              <i class="fas fa-receipt"></i>
             </div>
             <div class="summary-card bg-warning">
-              <h3>Giá Trị Đơn Trung Bình</h3>
-              <h2 id="revAverage">0 đ</h2>
+              <h3>Thành Viên Mới</h3>
+              <h2 id="repCust">0</h2>
+              <i class="fas fa-user-plus"></i>
             </div>
           </div>
-          <div class="card">
+
+          <div class="split-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-chart-bar"></i> Biểu đồ Doanh thu (D6.1)
+                </h3>
+              </div>
+              <div style="position: relative; height: 300px; width: 100%">
+                <canvas id="revenueChart"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-exclamation-triangle"></i> Cảnh báo Tồn kho
+                  (D6.2)
+                </h3>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nguyên Liệu</th>
+                    <th>Tồn Kho</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryAlertBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 20px">
+            <div class="card-header">
+              <h3><i class="fas fa-list"></i> Lịch sử Giao dịch (D4.2)</h3>
+            </div>
             <input
               type="text"
               class="search-box"
-              placeholder="🔍 Tìm kiếm hóa đơn..."
+              placeholder="🔍 Tìm kiếm mã hóa đơn..."
               onkeyup="filterTable('revenueTableBody', this.value)"
             />
             <table>
@@ -476,11 +726,11 @@
                 <tr>
                   <th>Mã HĐ</th>
                   <th>Thời Gian</th>
+                  <th>Bàn</th>
                   <th>Khách Hàng</th>
-                  <th style="width: 30%">Chi Tiết Món</th>
-                  <th>Giảm Giá</th>
+                  <th>Chi Tiết</th>
+                  <th>Thanh Toán</th>
                   <th>Tổng Tiền</th>
-                  <th>Thao Tác</th>
                 </tr>
               </thead>
               <tbody id="revenueTableBody"></tbody>
@@ -488,171 +738,94 @@
           </div>
         </div>
 
-        <div id="tab-promo" class="content-section">
-          <div class="card">
-            <h3 id="promoFormTitle">Tạo Mã Khuyến Mãi Mới</h3>
-            <form id="formPromo" onsubmit="savePromo(event)">
-              <div class="form-group">
-                <input
-                  type="text"
-                  id="pr_code"
-                  placeholder="Mã KM (VD: TET2024)"
-                  required
-                  style="text-transform: uppercase"
-                />
-                <input
-                  type="text"
-                  id="pr_name"
-                  placeholder="Mô tả chương trình"
-                  required
-                />
-                <select id="pr_type" required>
-                  <option value="percent">Giảm theo Phần trăm (%)</option>
-                  <option value="amount">Giảm tiền mặt (VNĐ)</option>
-                </select>
-                <input
-                  type="number"
-                  id="pr_value"
-                  placeholder="Mức giảm (VD: 10 hoặc 20000)"
-                  required
-                />
-                <button type="submit" id="btnSubmitPromo">Lưu Mã</button>
-                <button
-                  type="button"
-                  class="btn-cancel"
-                  id="btnCancelPromo"
-                  onclick="cancelEdit('promo')"
-                >
-                  Hủy
-                </button>
-              </div>
-            </form>
-          </div>
-          <div class="card">
-            <input
-              type="text"
-              class="search-box"
-              placeholder="🔍 Tìm kiếm mã khuyến mãi..."
-              onkeyup="filterTable('promoTableBody', this.value)"
-            />
-            <table>
-              <thead>
-                <tr>
-                  <th>Mã KM</th>
-                  <th>Chương Trình</th>
-                  <th>Loại Giảm Giá</th>
-                  <th>Mức Giảm</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody id="promoTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div id="tab-salary" class="content-section">
-          <div class="pos-grid">
+        <div id="tab-inventory" class="content-section">
+          <div class="split-grid">
             <div class="card">
-              <h3>Chấm công</h3>
-              <form id="formShift" onsubmit="saveShift(event)">
-                <div class="form-group">
-                  <select id="sh_staff" required>
-                    <option value="">-- Chọn Nhân Viên --</option>
-                  </select>
-                  <input type="date" id="sh_date" required />
-                  <select id="sh_type" required>
-                    <option value="Ca Sáng">Ca Sáng</option>
-                    <option value="Ca Chiều">Ca Chiều</option>
-                    <option value="Ca Tối">Ca Tối</option>
-                  </select>
-                  <input
-                    type="number"
-                    id="sh_hours"
-                    placeholder="Số giờ làm"
-                    required
-                    min="1"
-                    max="12"
-                  />
-                  <button type="submit" style="width: 100%; margin-top: 10px">
-                    Lưu Ca Làm
+              <div class="card-header">
+                <h3>Sổ Chứng Từ Kho (D1.2)</h3>
+                <div>
+                  <button onclick="openModal('modalInventory')" class="btn-sm">
+                    <i class="fas fa-plus"></i> Nhập kho
+                  </button>
+                  <button
+                    onclick="openModal('modalSpoilage')"
+                    class="btn-danger btn-sm"
+                  >
+                    <i class="fas fa-minus"></i> Xuất/Hủy
                   </button>
                 </div>
-              </form>
-            </div>
-            <div class="card">
-              <h3>Bảng Lương Tổng Hợp</h3>
-              <button
-                onclick="calculateSalary()"
-                class="btn-success"
-                style="margin-bottom: 15px; margin-top: 0"
-              >
-                Tính Lương
-              </button>
+              </div>
+              <input
+                type="text"
+                class="search-box"
+                placeholder="🔍 Tìm nguyên liệu..."
+                onkeyup="filterTable('inventoryTableBody', this.value)"
+              />
               <table>
                 <thead>
                   <tr>
-                    <th>Nhân Viên</th>
-                    <th>Tổng Giờ</th>
-                    <th>Tổng Lương</th>
+                    <th>Mã NL</th>
+                    <th>Tên Nguyên Liệu</th>
+                    <th>Tồn Kho</th>
+                    <th>Đơn Vị</th>
+                    <th>Thao Tác</th>
                   </tr>
                 </thead>
-                <tbody id="salaryTableBody"></tbody>
+                <tbody id="inventoryTableBody"></tbody>
               </table>
             </div>
-          </div>
-          <div class="card">
-            <input
-              type="text"
-              class="search-box"
-              placeholder="🔍 Tìm kiếm ca làm..."
-              onkeyup="filterTable('shiftTableBody', this.value)"
-            />
-            <table>
-              <thead>
-                <tr>
-                  <th>Ngày</th>
-                  <th>Nhân Viên</th>
-                  <th>Loại Ca</th>
-                  <th>Số Giờ</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody id="shiftTableBody"></tbody>
-            </table>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Hồ sơ Nhà Cung Cấp (D1.1)</h3>
+                <button onclick="openModal('modalSupplier')" class="btn-sm">
+                  <i class="fas fa-truck"></i> Thêm NCC
+                </button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tên NCC</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Sản phẩm cấp</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="supplierTableBody"></tbody>
+              </table>
+
+              <div
+                class="card-header"
+                style="
+                  margin-top: 30px;
+                  border-top: 1px solid #eee;
+                  padding-top: 15px;
+                "
+              >
+                <h3>Kiểm kê tồn kho (D1.4)</h3>
+                <button
+                  onclick="openModal('modalInvCheck')"
+                  class="btn-warning btn-sm"
+                >
+                  <i class="fas fa-clipboard-check"></i> Lập Phiếu Kiểm Kê
+                </button>
+              </div>
+              <p style="font-size: 13px; color: #666">
+                Đối chiếu số lượng thực tế trong kho và hệ thống để tạo báo cáo
+                lệch kho.
+              </p>
+            </div>
           </div>
         </div>
 
         <div id="tab-menu" class="content-section">
           <div class="card">
-            <h3 id="menuFormTitle">Khởi tạo món mới</h3>
-            <form id="formMenu" onsubmit="saveMenu(event)">
-              <div class="form-group">
-                <input type="text" id="m_name" placeholder="Tên món" required />
-                <select id="m_category" required>
-                  <option value="">-- Phân loại --</option>
-                  <option value="Trà Trái Cây">Trà Trái Cây</option>
-                  <option value="Cà Phê">Cà Phê</option>
-                  <option value="Trà Sữa">Trà Sữa</option>
-                </select>
-                <input
-                  type="number"
-                  id="m_price"
-                  placeholder="Giá chuẩn (Size M)"
-                  required
-                />
-                <button type="submit" id="btnSubmitMenu">Lưu</button>
-                <button
-                  type="button"
-                  class="btn-cancel"
-                  id="btnCancelMenu"
-                  onclick="cancelEdit('menu')"
-                >
-                  Hủy
-                </button>
-              </div>
-            </form>
-          </div>
-          <div class="card">
+            <div class="card-header">
+              <h3>Danh mục & Thực đơn (D2b)</h3>
+              <button onclick="openModal('modalMenu')">
+                <i class="fas fa-plus"></i> Khai báo Món mới (D4.2)
+              </button>
+            </div>
             <input
               type="text"
               class="search-box"
@@ -666,6 +839,7 @@
                   <th>Tên Món</th>
                   <th>Danh Mục</th>
                   <th>Giá Chuẩn (M)</th>
+                  <th>Công Thức (D2d)</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
@@ -675,96 +849,152 @@
         </div>
 
         <div id="tab-staff" class="content-section">
-          <div class="card">
-            <h3 id="staffFormTitle">Nhân sự</h3>
-            <form id="formStaff" onsubmit="saveStaff(event)">
-              <div class="form-group">
-                <input
-                  type="text"
-                  id="s_name"
-                  placeholder="Họ và Tên"
-                  required
-                />
-                <input
-                  type="text"
-                  id="s_phone"
-                  placeholder="Số điện thoại"
-                  required
-                />
-                <select id="s_role" required>
-                  <option value="Pha chế">Pha chế</option>
-                  <option value="Thu ngân">Thu ngân</option>
-                  <option value="Quản lý">Quản lý</option>
-                </select>
-                <input
-                  type="number"
-                  id="s_wage"
-                  placeholder="Lương/Giờ"
-                  required
-                />
-                <button type="submit" id="btnSubmitStaff">Lưu</button>
-                <button
-                  type="button"
-                  class="btn-cancel"
-                  id="btnCancelStaff"
-                  onclick="cancelEdit('staff')"
-                >
-                  Hủy
+          <div class="split-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>Hồ sơ & Phân quyền (D3.1 & D3.3)</h3>
+                <button onclick="openModal('modalStaff')" class="btn-sm">
+                  <i class="fas fa-user-plus"></i> Thêm Nhân Viên
                 </button>
               </div>
-            </form>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã NV</th>
+                    <th>Họ và Tên</th>
+                    <th>Chức Vụ</th>
+                    <th>Lương/Giờ</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="staffTableBody"></tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Bàn giao & Chốt ca (D3.4)</h3>
+                <button
+                  onclick="openModal('modalShiftClose')"
+                  class="btn-success btn-sm"
+                >
+                  <i class="fas fa-lock"></i> Chốt Doanh Thu Ca
+                </button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Thời Gian</th>
+                    <th>Nhân Viên</th>
+                    <th>Ca làm</th>
+                    <th>Tiền Bàn Giao</th>
+                  </tr>
+                </thead>
+                <tbody id="shiftCloseTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-salary" class="content-section">
+          <div class="pos-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-calendar-check"></i> Sắp xếp & Chấm công
+                </h3>
+              </div>
+              <form onsubmit="saveShift(event)">
+                <div class="form-group">
+                  <div class="form-control">
+                    <label>Nhân viên:</label
+                    ><select id="sh_staff" required></select>
+                  </div>
+                  <div class="form-control">
+                    <label>Ngày làm:</label
+                    ><input type="date" id="sh_date" required />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="form-control">
+                    <label>Ca làm:</label
+                    ><select id="sh_type" required>
+                      <option value="Ca Sáng">Ca Sáng</option>
+                      <option value="Ca Chiều">Ca Chiều</option>
+                      <option value="Ca Tối">Ca Tối</option>
+                    </select>
+                  </div>
+                  <div class="form-control">
+                    <label>Số giờ:</label
+                    ><input
+                      type="number"
+                      id="sh_hours"
+                      required
+                      min="1"
+                      max="12"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  style="width: 100%; justify-content: center"
+                >
+                  <i class="fas fa-save"></i> Lưu Ca Làm
+                </button>
+              </form>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>Bảng Lương Tháng</h3>
+                <button onclick="calculateSalary()" class="btn-success">
+                  <i class="fas fa-calculator"></i> Tính Lương
+                </button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nhân Viên</th>
+                    <th>Tổng Giờ</th>
+                    <th>Tổng Lương</th>
+                  </tr>
+                </thead>
+                <tbody id="salaryTableBody"></tbody>
+              </table>
+            </div>
           </div>
           <div class="card">
+            <h3 style="margin-top: 0">
+              <i class="fas fa-history"></i> Lịch sử Ca làm việc
+            </h3>
             <input
               type="text"
               class="search-box"
-              placeholder="🔍 Tìm kiếm nhân sự..."
-              onkeyup="filterTable('staffTableBody', this.value)"
+              placeholder="🔍 Tìm kiếm..."
+              onkeyup="filterTable('shiftTableBody', this.value)"
             />
             <table>
               <thead>
                 <tr>
-                  <th>Mã NV</th>
-                  <th>Họ và Tên</th>
-                  <th>Số điện thoại</th>
-                  <th>Vị trí</th>
-                  <th>Lương/Giờ</th>
+                  <th>Ngày</th>
+                  <th>Nhân Viên</th>
+                  <th>Ca</th>
+                  <th>Số Giờ</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
-              <tbody id="staffTableBody"></tbody>
+              <tbody id="shiftTableBody"></tbody>
             </table>
           </div>
         </div>
 
         <div id="tab-customer" class="content-section">
           <div class="card">
-            <h3 id="custFormTitle">Khách hàng</h3>
-            <form id="formCustomer" onsubmit="saveCustomer(event)">
-              <div class="form-group">
-                <input
-                  type="text"
-                  id="c_name"
-                  placeholder="Tên khách hàng"
-                  required
-                /><input
-                  type="text"
-                  id="c_phone"
-                  placeholder="Số điện thoại"
-                  required
-                /><button type="submit" id="btnSubmitCust">Lưu</button
-                ><button
-                  type="button"
-                  class="btn-cancel"
-                  id="btnCancelCust"
-                  onclick="cancelEdit('customer')"
-                >
-                  Hủy
-                </button>
-              </div>
-            </form>
-          </div>
-          <div class="card">
+            <div class="card-header">
+              <h3>Hồ sơ Khách Hàng (D3)</h3>
+              <button onclick="openModal('modalCustomer')">
+                <i class="fas fa-plus"></i> Đăng ký Khách Hàng
+              </button>
+            </div>
             <input
               type="text"
               class="search-box"
@@ -777,7 +1007,8 @@
                   <th>Mã KH</th>
                   <th>Tên Khách Hàng</th>
                   <th>Số Điện Thoại</th>
-                  <th>Điểm Tích Lũy</th>
+                  <th>Điểm Thưởng (D5.2)</th>
+                  <th>Hạng TV</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
@@ -786,93 +1017,409 @@
           </div>
         </div>
 
-        <div id="tab-inventory" class="content-section">
+        <div id="tab-promo" class="content-section">
           <div class="card">
-            <form id="formInventory" onsubmit="saveInventory(event)">
-              <div class="form-group">
-                <input
-                  type="text"
-                  id="i_name"
-                  placeholder="Tên nguyên liệu"
-                  required
-                /><input
-                  type="number"
-                  id="i_qty"
-                  placeholder="Số lượng"
-                  required
-                /><select id="i_unit" required>
-                  <option value="kg">Kg</option>
-                  <option value="lít">Lít</option>
-                  <option value="hộp">Hộp</option></select
-                ><button type="submit">Nhập Kho</button>
-              </div>
-            </form>
-          </div>
-          <div class="card">
+            <div class="card-header">
+              <h3>Thiết lập Khuyến mãi (D5.3)</h3>
+              <button onclick="openModal('modalPromo')">
+                <i class="fas fa-plus"></i> Tạo Mã Voucher
+              </button>
+            </div>
             <input
               type="text"
               class="search-box"
-              placeholder="🔍 Tìm nguyên liệu..."
-              onkeyup="filterTable('inventoryTableBody', this.value)"
+              placeholder="🔍 Tìm mã KM..."
+              onkeyup="filterTable('promoTableBody', this.value)"
             />
             <table>
               <thead>
                 <tr>
-                  <th>Mã NL</th>
-                  <th>Tên Nguyên Liệu</th>
-                  <th>Tồn Kho</th>
-                  <th>Đơn Vị</th>
+                  <th>Mã Voucher</th>
+                  <th>Chương Trình</th>
+                  <th>Loại</th>
+                  <th>Mức Giảm</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
-              <tbody id="inventoryTableBody"></tbody>
+              <tbody id="promoTableBody"></tbody>
             </table>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div id="tab-spoilage" class="content-section">
-          <div class="card">
-            <form id="formSpoilage" onsubmit="saveSpoilage(event)">
-              <div class="form-group">
-                <input
-                  type="text"
-                  id="sp_name"
-                  placeholder="Tên hàng hóa"
-                  required
-                /><input
-                  type="number"
-                  id="sp_qty"
-                  placeholder="Số lượng"
-                  required
-                /><input
-                  type="text"
-                  id="sp_reason"
-                  placeholder="Lý do"
-                  required
-                /><button type="submit" class="btn-danger">Ghi Nhận Hủy</button>
-              </div>
-            </form>
-          </div>
-          <div class="card">
-            <input
-              type="text"
-              class="search-box"
-              placeholder="🔍 Tìm phiếu xuất hủy..."
-              onkeyup="filterTable('spoilageTableBody', this.value)"
-            />
-            <table>
-              <thead>
-                <tr>
-                  <th>Ngày Hủy</th>
-                  <th>Tên Hàng Hóa</th>
-                  <th>Số Lượng</th>
-                  <th>Lý Do</th>
-                </tr>
-              </thead>
-              <tbody id="spoilageTableBody"></tbody>
-            </table>
-          </div>
+    <div id="modalMenu" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalMenuTitle">Khai báo Món & Công thức</h2>
+          <button class="close-btn" onclick="closeModal('modalMenu')">
+            &times;
+          </button>
         </div>
+        <form onsubmit="saveMenu(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Tên món:</label><input type="text" id="m_name" required />
+            </div>
+            <div class="form-control">
+              <label>Danh mục (D4.1):</label
+              ><select id="m_category" required>
+                <option value="Trà Trái Cây">Trà Trái Cây</option>
+                <option value="Cà Phê">Cà Phê</option>
+                <option value="Trà Sữa">Trà Sữa</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-control">
+              <label>Giá chuẩn (Size M):</label
+              ><input type="number" id="m_price" required />
+            </div>
+            <div class="form-control">
+              <label>Công thức (D4.3):</label
+              ><input
+                type="text"
+                id="m_recipe"
+                placeholder="VD: 50g cafe, 20ml sữa"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalMenu')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Lưu Thông Tin</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modalStaff" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalStaffTitle">Cập nhật Hồ sơ Nhân viên</h2>
+          <button class="close-btn" onclick="closeModal('modalStaff')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveStaff(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Họ và Tên:</label
+              ><input type="text" id="s_name" required />
+            </div>
+            <div class="form-control">
+              <label>Số điện thoại:</label
+              ><input type="text" id="s_phone" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-control">
+              <label>Phân quyền (D3.3):</label
+              ><select id="s_role" required>
+                <option value="Pha chế">Pha chế</option>
+                <option value="Thu ngân">Thu ngân</option>
+                <option value="Quản lý">Quản lý</option>
+              </select>
+            </div>
+            <div class="form-control">
+              <label>Mức lương / Giờ (VNĐ):</label
+              ><input type="number" id="s_wage" required />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalStaff')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Lưu Nhân Viên</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modalCustomer" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalCustTitle">Thông tin Khách Hàng</h2>
+          <button class="close-btn" onclick="closeModal('modalCustomer')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveCustomer(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Tên khách hàng:</label
+              ><input type="text" id="c_name" required />
+            </div>
+            <div class="form-control">
+              <label>Số điện thoại:</label
+              ><input type="text" id="c_phone" required />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalCustomer')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="modalPromo" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalPromoTitle">Thiết lập Khuyến Mãi</h2>
+          <button class="close-btn" onclick="closeModal('modalPromo')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="savePromo(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Mã KM (Code):</label
+              ><input
+                type="text"
+                id="pr_code"
+                style="text-transform: uppercase"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label>Tên Chương trình:</label
+              ><input type="text" id="pr_name" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-control">
+              <label>Loại giảm giá:</label
+              ><select id="pr_type" required>
+                <option value="amount">Giảm Tiền mặt</option>
+                <option value="percent">Giảm %</option>
+              </select>
+            </div>
+            <div class="form-control">
+              <label>Mức giảm:</label
+              ><input type="number" id="pr_value" required />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalPromo')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Lưu Mã</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modalSupplier" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Thêm Nhà Cung Cấp (D1.1)</h2>
+          <button class="close-btn" onclick="closeModal('modalSupplier')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveSupplier(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Tên NCC:</label
+              ><input type="text" id="sup_name" required />
+            </div>
+            <div class="form-control">
+              <label>SĐT Liên hệ:</label
+              ><input type="text" id="sup_phone" required />
+            </div>
+          </div>
+          <div class="form-control" style="margin-bottom: 15px">
+            <label>Sản phẩm cung cấp chính:</label
+            ><input
+              type="text"
+              id="sup_desc"
+              placeholder="VD: Cafe hạt, Sữa đặc..."
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalSupplier')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Lưu NCC</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="modalInventory" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Lập Phiếu Nhập Kho (D1.2)</h2>
+          <button class="close-btn" onclick="closeModal('modalInventory')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveInventory(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Tên Nguyên liệu:</label
+              ><input type="text" id="i_name" required />
+            </div>
+            <div class="form-control">
+              <label>Số lượng:</label
+              ><input type="number" id="i_qty" required />
+            </div>
+            <div class="form-control">
+              <label>Đơn vị:</label
+              ><select id="i_unit" required>
+                <option value="kg">Kg</option>
+                <option value="lít">Lít</option>
+                <option value="hộp">Hộp</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalInventory')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Ghi Sổ</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="modalSpoilage" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Lập Phiếu Xuất/Hủy (D1.3)</h2>
+          <button class="close-btn" onclick="closeModal('modalSpoilage')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveSpoilage(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Mã / Tên Hàng Hóa:</label
+              ><input type="text" id="sp_name" required />
+            </div>
+            <div class="form-control">
+              <label>Số lượng xuất/hủy:</label
+              ><input type="number" id="sp_qty" required />
+            </div>
+          </div>
+          <div class="form-control" style="margin-bottom: 15px">
+            <label>Lý do:</label
+            ><input
+              type="text"
+              id="sp_reason"
+              placeholder="VD: Hết hạn, Vỡ..."
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalSpoilage')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-danger">Xác Nhận Hủy</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="modalInvCheck" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Báo Cáo Kiểm Kê (D1.4)</h2>
+          <button class="close-btn" onclick="closeModal('modalInvCheck')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveInvCheck(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Chọn Nguyên liệu:</label
+              ><select id="chk_item" required></select>
+            </div>
+            <div class="form-control">
+              <label>Số lượng đếm thực tế:</label
+              ><input type="number" id="chk_qty" required />
+            </div>
+          </div>
+          <div class="form-control" style="margin-bottom: 15px">
+            <label>Ghi chú sai lệch:</label
+            ><input
+              type="text"
+              id="chk_note"
+              placeholder="Nguyên nhân lệch (nếu có)"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalInvCheck')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-warning">Cập Nhật Tồn Kho</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modalShiftClose" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Bàn Giao & Chốt Ca (D3.4)</h2>
+          <button class="close-btn" onclick="closeModal('modalShiftClose')">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveShiftClose(event)">
+          <div class="form-group">
+            <div class="form-control">
+              <label>Nhân viên thu ngân:</label
+              ><select id="cl_staff" required></select>
+            </div>
+            <div class="form-control">
+              <label>Ca kết thúc:</label
+              ><select id="cl_type" required>
+                <option value="Ca Sáng">Ca Sáng</option>
+                <option value="Ca Chiều">Ca Chiều</option>
+                <option value="Ca Tối">Ca Tối</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-control" style="margin-bottom: 15px">
+            <label>Tiền mặt bàn giao thực tế tại két (VNĐ):</label
+            ><input type="number" id="cl_money" required />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline"
+              onclick="closeModal('modalShiftClose')"
+            >
+              Hủy</button
+            ><button type="submit" class="btn-success">Xác nhận Chốt</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -888,6 +1435,14 @@
                 name: "Cà Phê Đen",
                 category: "Cà Phê",
                 price: 20000,
+                recipe: "20g cafe hạt",
+              },
+              {
+                id: "M-2",
+                name: "Trà Sữa Truyền Thống",
+                category: "Trà Sữa",
+                price: 30000,
+                recipe: "30ml trà, 20ml sữa",
               },
             ]),
           );
@@ -897,9 +1452,9 @@
             JSON.stringify([
               {
                 id: "NV-1",
-                name: "Nhân viên Mẫu",
+                name: "Nguyễn Văn A",
                 phone: "0901234567",
-                role: "Pha chế",
+                role: "Thu ngân",
                 wage: 25000,
               },
             ]),
@@ -907,13 +1462,32 @@
         if (!localStorage.getItem("customerData"))
           localStorage.setItem("customerData", JSON.stringify([]));
         if (!localStorage.getItem("inventoryData"))
-          localStorage.setItem("inventoryData", JSON.stringify([]));
+          localStorage.setItem(
+            "inventoryData",
+            JSON.stringify([
+              { id: "KHO-1", name: "Hạt Cafe Arabica", qty: 5, unit: "kg" },
+            ]),
+          );
         if (!localStorage.getItem("spoilageData"))
           localStorage.setItem("spoilageData", JSON.stringify([]));
+        if (!localStorage.getItem("supplierData"))
+          localStorage.setItem(
+            "supplierData",
+            JSON.stringify([
+              {
+                id: "NCC-1",
+                name: "Đại lý Cafe Trung Nguyên",
+                phone: "0281234",
+                desc: "Cafe hạt các loại",
+              },
+            ]),
+          );
         if (!localStorage.getItem("salesData"))
           localStorage.setItem("salesData", JSON.stringify([]));
         if (!localStorage.getItem("shiftData"))
           localStorage.setItem("shiftData", JSON.stringify([]));
+        if (!localStorage.getItem("shiftCloseData"))
+          localStorage.setItem("shiftCloseData", JSON.stringify([]));
         if (!localStorage.getItem("promoData"))
           localStorage.setItem(
             "promoData",
@@ -921,7 +1495,7 @@
               {
                 id: "PR-1",
                 code: "GIAM10K",
-                name: "Giảm 10k cho đơn mới",
+                name: "Giảm 10k",
                 type: "amount",
                 value: 10000,
               },
@@ -929,15 +1503,14 @@
           );
       }
 
-      // --- BỘ LỌC TÌM KIẾM ---
+      // --- 2. GIAO DIỆN & TÌM KIẾM ---
       function filterTable(tableId, keyword) {
         let trs = document.getElementById(tableId).getElementsByTagName("tr");
         let filter = keyword.toLowerCase();
-        for (let i = 0; i < trs.length; i++) {
+        for (let i = 0; i < trs.length; i++)
           trs[i].style.display = trs[i].innerText.toLowerCase().includes(filter)
             ? ""
             : "none";
-        }
       }
 
       function switchTab(tabId, element) {
@@ -949,17 +1522,71 @@
           .forEach((el) => el.classList.remove("active"));
         document.getElementById(tabId).classList.add("active");
         element.classList.add("active");
-        document.getElementById("pageTitle").innerText =
-          element.innerText.substring(3);
+
+        let title = element.innerText;
+        if (title.includes(".")) title = title.split(".")[1].trim();
+        document.getElementById("pageTitle").innerText = title;
 
         if (tabId === "tab-sales") loadPOSMenu();
-        if (tabId === "tab-revenue") loadRevenue();
+        if (tabId === "tab-report") {
+          loadRevenue();
+          drawCharts();
+          loadInventoryAlert();
+        }
         if (tabId === "tab-salary") loadSalaryTab();
-        if (tabId === "tab-promo") loadPromo();
+        if (tabId === "tab-staff") {
+          loadStaff();
+          loadShiftClose();
+        } // Fix lỗi không load bảng chốt ca
+        if (tabId === "tab-inventory") {
+          loadInventory();
+          loadSupplier();
+        }
+      }
+
+      // --- 3. QUẢN LÝ POPUP ---
+      function openModal(modalId) {
+        document.getElementById(modalId).classList.add("active");
+        if (modalId === "modalShiftClose") {
+          const staff = JSON.parse(localStorage.getItem("staffData")) || [];
+          const sel2 = document.getElementById("cl_staff");
+          sel2.innerHTML = '<option value="">- Chọn Thu Ngân -</option>';
+          staff.forEach((s) => {
+            if (s.role === "Thu ngân" || s.role === "Quản lý")
+              sel2.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+          });
+        }
+        if (modalId === "modalInvCheck") {
+          const inv = JSON.parse(localStorage.getItem("inventoryData")) || [];
+          const sel = document.getElementById("chk_item");
+          sel.innerHTML = '<option value="">- Chọn Nguyên Liệu -</option>';
+          inv.forEach(
+            (i) =>
+              (sel.innerHTML += `<option value="${i.id}">${i.name} (Tồn HT: ${i.qty})</option>`),
+          );
+        }
+        if (modalId === "modalShift") {
+          const staff = JSON.parse(localStorage.getItem("staffData")) || [];
+          const sel1 = document.getElementById("sh_staff");
+          sel1.innerHTML = '<option value="">- Chọn NV -</option>';
+          staff.forEach(
+            (s) =>
+              (sel1.innerHTML += `<option value="${s.id}">${s.name} (${s.role})</option>`),
+          );
+        }
+      }
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+        const form = document.getElementById(modalId).querySelector("form");
+        if (form) form.reset();
+        editMenuId = null;
+        editStaffId = null;
+        editCustId = null;
+        editPromoId = null;
       }
 
       function generateID(prefix) {
-        return prefix + "-" + Math.floor(Math.random() * 1000000);
+        return prefix + "-" + Math.floor(Math.random() * 100000);
       }
       function loadTable(storageKey, tableId, renderRowHTML) {
         const data = JSON.parse(localStorage.getItem(storageKey)) || [];
@@ -970,17 +1597,24 @@
         });
       }
 
-      // --- BÁN HÀNG & ĐỒNG BỘ MÀN HÌNH KHÁCH ---
+      // --- 4. BÁN HÀNG (POS) TÍCH HỢP BỘ LỌC 2 LỚP ---
       let currentCart = [];
       let appliedPromoObj = null;
 
       function loadPOSMenu() {
         const menu = JSON.parse(localStorage.getItem("menuData")) || [];
-        const select = document.getElementById("pos_menuSelect");
-        select.innerHTML = "";
-        menu.forEach((item) => {
-          select.innerHTML += `<option value="${item.id}">${item.name} - ${item.price.toLocaleString()}đ</option>`;
+
+        // Xử lý Danh mục trước
+        const categories = [...new Set(menu.map((item) => item.category))];
+        const catSelect = document.getElementById("pos_categorySelect");
+        catSelect.innerHTML =
+          '<option value="ALL">-- Tất cả danh mục --</option>';
+        categories.forEach((cat) => {
+          catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
+
+        // Tải danh sách món theo danh mục mặc định
+        filterPosMenu();
 
         document.querySelector('input[name="pos_size"][value="M"]').checked =
           true;
@@ -996,6 +1630,27 @@
         renderCart();
       }
 
+      // Hàm lọc món theo danh mục
+      function filterPosMenu() {
+        const menu = JSON.parse(localStorage.getItem("menuData")) || [];
+        const selectedCat = document.getElementById("pos_categorySelect").value;
+        const select = document.getElementById("pos_menuSelect");
+        select.innerHTML = "";
+
+        const filteredMenu =
+          selectedCat === "ALL"
+            ? menu
+            : menu.filter((m) => m.category === selectedCat);
+
+        if (filteredMenu.length === 0) {
+          select.innerHTML = '<option value="">(Không có món)</option>';
+        } else {
+          filteredMenu.forEach((item) => {
+            select.innerHTML += `<option value="${item.id}">${item.name} - ${item.price.toLocaleString()}đ</option>`;
+          });
+        }
+      }
+
       function checkCustomerPhone() {
         const phone = document.getElementById("pos_customerPhone").value.trim();
         const msg = document.getElementById("customerMessage");
@@ -1003,17 +1658,15 @@
           msg.innerText = "";
           return;
         }
-
         const customers =
           JSON.parse(localStorage.getItem("customerData")) || [];
         const found = customers.find((c) => c.phone === phone);
-
         if (found) {
           msg.style.color = "var(--success)";
-          msg.innerText = `👤 Khách quen: ${found.name} (Điểm: ${found.points || 0})`;
+          msg.innerText = `👤 Khách: ${found.name} | Điểm: ${found.points || 0} | Hạng: ${found.tier || "Mới"}`;
         } else {
           msg.style.color = "var(--warning)";
-          msg.innerText = `✨ Khách mới: Sẽ tự tạo hồ sơ khi thanh toán.`;
+          msg.innerText = `✨ Khách mới: Sẽ tự tạo hồ sơ D3 khi thanh toán.`;
         }
       }
 
@@ -1022,7 +1675,6 @@
         const qty = parseInt(document.getElementById("pos_qty").value);
         const menu = JSON.parse(localStorage.getItem("menuData"));
         const item = menu.find((m) => m.id === menuId);
-
         if (item && qty > 0) {
           let selectedSize = document.querySelector(
             'input[name="pos_size"]:checked',
@@ -1030,19 +1682,16 @@
           let sizeMultiplier =
             selectedSize === "S" ? 0.9 : selectedSize === "L" ? 1.2 : 1.0;
           let basePrice = Math.round(item.price * sizeMultiplier);
-
           let toppings = [];
           let toppingPrice = 0;
           document.querySelectorAll(".pos_topping:checked").forEach((cb) => {
             toppings.push(cb.value);
             toppingPrice += parseInt(cb.getAttribute("data-price"));
           });
-
           let finalUnitPrice = basePrice + toppingPrice;
-          let itemName = `${item.name} (Size ${selectedSize})`;
+          let itemName = `<b>${item.name}</b> (Size ${selectedSize})`;
           if (toppings.length > 0)
             itemName += `<br><small style="color:#7f8c8d">+ ${toppings.join(", ")}</small>`;
-
           currentCart.push({
             nameHTML: itemName,
             plainName: `${item.name} (${selectedSize}) + ${toppings.join(",")}`,
@@ -1060,22 +1709,21 @@
           .toUpperCase();
         const promoDB = JSON.parse(localStorage.getItem("promoData")) || [];
         const promo = promoDB.find((p) => p.code === codeInput);
-
         const msgEl = document.getElementById("promoMessage");
         if (currentCart.length === 0) {
           msgEl.style.color = "var(--danger)";
-          msgEl.innerText = "Vui lòng thêm món vào giỏ trước khi áp dụng mã!";
+          msgEl.innerText = "Vui lòng thêm món vào giỏ!";
           return;
         }
         if (promo) {
           appliedPromoObj = promo;
           msgEl.style.color = "var(--success)";
-          msgEl.innerText = `Đã áp dụng: ${promo.name} (${promo.type === "percent" ? "-" + promo.value + "%" : "-" + promo.value.toLocaleString() + "đ"})`;
+          msgEl.innerText = `Đã áp dụng: ${promo.name}`;
           renderCart();
         } else {
           appliedPromoObj = null;
           msgEl.style.color = "var(--danger)";
-          msgEl.innerText = "Mã khuyến mãi không hợp lệ hoặc không tồn tại!";
+          msgEl.innerText = "Mã không hợp lệ!";
           renderCart();
         }
       }
@@ -1086,50 +1734,44 @@
         let subtotal = 0;
         currentCart.forEach((item) => {
           subtotal += item.total;
-          tbody.innerHTML += `<tr><td>${item.nameHTML}</td><td>${item.qty}</td><td>${item.total.toLocaleString()}</td></tr>`;
+          tbody.innerHTML += `<tr><td style="padding:8px 0">${item.nameHTML}</td><td style="text-align:center">x${item.qty}</td><td style="text-align:right; font-weight:bold">${item.total.toLocaleString()} đ</td></tr>`;
         });
-
         document.getElementById("cartSubtotal").innerText =
           subtotal.toLocaleString();
-
         let discountAmount = 0;
         if (appliedPromoObj && subtotal > 0) {
-          if (appliedPromoObj.type === "percent") {
-            discountAmount = Math.round(
-              subtotal * (appliedPromoObj.value / 100),
-            );
-          } else {
-            discountAmount = parseInt(appliedPromoObj.value);
-          }
+          discountAmount =
+            appliedPromoObj.type === "percent"
+              ? Math.round(subtotal * (appliedPromoObj.value / 100))
+              : parseInt(appliedPromoObj.value);
           if (discountAmount > subtotal) discountAmount = subtotal;
         }
-
         document.getElementById("cartDiscount").innerText =
           discountAmount > 0 ? "-" + discountAmount.toLocaleString() : "0";
         let grandTotal = subtotal - discountAmount;
         document.getElementById("cartTotal").innerText =
           grandTotal.toLocaleString();
-
         window.currentTransactionDetails = {
           subtotal,
           discountAmount,
           grandTotal,
           promoCode: appliedPromoObj ? appliedPromoObj.code : "",
         };
-
         syncToDisplay();
       }
 
       function syncToDisplay() {
         if (!window.currentTransactionDetails) return;
-        const displayData = {
-          cart: currentCart,
-          subtotal: window.currentTransactionDetails.subtotal,
-          discount: window.currentTransactionDetails.discountAmount,
-          total: window.currentTransactionDetails.grandTotal,
-          payment: document.getElementById("pos_paymentMethod").value,
-        };
-        localStorage.setItem("livePosData", JSON.stringify(displayData));
+        localStorage.setItem(
+          "livePosData",
+          JSON.stringify({
+            cart: currentCart,
+            subtotal: window.currentTransactionDetails.subtotal,
+            discount: window.currentTransactionDetails.discountAmount,
+            total: window.currentTransactionDetails.grandTotal,
+            payment: document.getElementById("pos_paymentMethod").value,
+          }),
+        );
       }
 
       function checkout() {
@@ -1137,6 +1779,7 @@
         const details = window.currentTransactionDetails;
         const paymentMethod =
           document.getElementById("pos_paymentMethod").value;
+        const tableArea = document.getElementById("pos_tableSelect").value;
         const phoneInput = document
           .getElementById("pos_customerPhone")
           .value.trim();
@@ -1150,22 +1793,22 @@
           let customerIndex = customers.findIndex(
             (c) => c.phone === phoneInput,
           );
-
-          earnedPoints = Math.floor(details.grandTotal / 10000); // 1 điểm = 10k
-
+          earnedPoints = Math.floor(details.grandTotal / 10000);
           if (customerIndex !== -1) {
-            // Cập nhật điểm khách cũ
             customerName = customers[customerIndex].name;
             customers[customerIndex].points =
               (customers[customerIndex].points || 0) + earnedPoints;
+            let pts = customers[customerIndex].points;
+            customers[customerIndex].tier =
+              pts > 500 ? "Kim Cương" : pts > 200 ? "Vàng" : "Bạc";
           } else {
-            // Tự động tạo khách mới
-            customerName = "Khách Hàng (" + phoneInput + ")";
+            customerName = "Khách mới (" + phoneInput + ")";
             customers.push({
               id: generateID("KH"),
               name: customerName,
               phone: phoneInput,
               points: earnedPoints,
+              tier: "Bạc",
             });
           }
           localStorage.setItem("customerData", JSON.stringify(customers));
@@ -1176,6 +1819,7 @@
         sales.push({
           id: generateID("HD"),
           date: new Date().toLocaleString(),
+          table: tableArea,
           customerName: customerName,
           payment: paymentMethod,
           items: currentCart,
@@ -1186,10 +1830,7 @@
         localStorage.setItem("salesData", JSON.stringify(sales));
 
         alert(
-          "THANH TOÁN THÀNH CÔNG!\n" +
-            (earnedPoints > 0
-              ? `+${earnedPoints} điểm cho khách hàng ${customerName}`
-              : ""),
+          `THANH TOÁN THÀNH CÔNG!\nBàn/Khu vực: ${tableArea}\n${earnedPoints > 0 ? `+${earnedPoints} điểm thưởng` : ""}`,
         );
 
         currentCart = [];
@@ -1199,155 +1840,91 @@
         document.getElementById("promoMessage").innerText = "";
         document.getElementById("pos_customerPhone").value = "";
         document.getElementById("customerMessage").innerText = "";
-
         renderCart();
         loadPOSMenu();
-        loadRevenue();
       }
 
-      // --- QUẢN LÝ KHUYẾN MÃI ---
-      let editPromoId = null;
-      function loadPromo() {
-        loadTable(
-          "promoData",
-          "promoTableBody",
-          (item) =>
-            `<tr><td><b>${item.code}</b></td><td>${item.name}</td><td>${item.type === "percent" ? "Phần trăm (%)" : "Tiền mặt (VNĐ)"}</td><td style="color:var(--danger); font-weight:bold;">${item.type === "percent" ? item.value + " %" : item.value.toLocaleString() + " đ"}</td><td><button class="btn-warning" onclick="editPromo('${item.id}')">Sửa</button> <button class="btn-danger" onclick="deleteItem('promoData', '${item.id}')">Xóa</button></td></tr>`,
-        );
-      }
-      function savePromo(e) {
-        e.preventDefault();
-        let d = JSON.parse(localStorage.getItem("promoData")) || [];
-        let code = document.getElementById("pr_code").value.toUpperCase();
-        if (editPromoId) {
-          let i = d.findIndex((x) => x.id === editPromoId);
-          d[i].code = code;
-          d[i].name = document.getElementById("pr_name").value;
-          d[i].type = document.getElementById("pr_type").value;
-          d[i].value = parseInt(document.getElementById("pr_value").value);
-        } else {
-          if (d.some((p) => p.code === code))
-            return alert("Mã Khuyến Mãi này đã tồn tại!");
-          d.push({
-            id: generateID("PR"),
-            code: code,
-            name: document.getElementById("pr_name").value,
-            type: document.getElementById("pr_type").value,
-            value: parseInt(document.getElementById("pr_value").value),
-          });
-        }
-        localStorage.setItem("promoData", JSON.stringify(d));
-        cancelEdit("promo");
-        loadPromo();
-      }
-      function editPromo(id) {
-        let d = JSON.parse(localStorage.getItem("promoData")).find(
-          (x) => x.id === id,
-        );
-        document.getElementById("pr_code").value = d.code;
-        document.getElementById("pr_name").value = d.name;
-        document.getElementById("pr_type").value = d.type;
-        document.getElementById("pr_value").value = d.value;
-        editPromoId = id;
-        document.getElementById("promoFormTitle").innerText =
-          "Cập nhật Mã Khuyến Mãi";
-        document.getElementById("btnSubmitPromo").innerText = "Cập nhật";
-        document.getElementById("btnCancelPromo").style.display =
-          "inline-block";
+      // --- 5. BÁO CÁO & BIỂU ĐỒ (CHART.JS CỐ ĐỊNH KÍCH THƯỚC) ---
+      let myRevenueChart = null;
+      function drawCharts() {
+        const sales = JSON.parse(localStorage.getItem("salesData")) || [];
+        if (sales.length === 0) return;
+        let dailyRevenue = {};
+        sales.forEach((s) => {
+          let dateOnly = s.date.split(",")[0];
+          dailyRevenue[dateOnly] = (dailyRevenue[dateOnly] || 0) + s.total;
+        });
+        const dates = Object.keys(dailyRevenue).slice(-7);
+        const revenues = dates.map((d) => dailyRevenue[d]);
+
+        if (myRevenueChart) myRevenueChart.destroy();
+        const ctxRev = document.getElementById("revenueChart").getContext("2d");
+        myRevenueChart = new Chart(ctxRev, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Doanh thu (VNĐ)",
+                data: revenues,
+                borderColor: "#3498db",
+                backgroundColor: "rgba(52, 152, 219, 0.2)",
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: { responsive: true, maintainAspectRatio: false }, // Đã cố định nhờ thẻ div cha
+        });
       }
 
-      // --- DOANH THU & HÓA ĐƠN ---
       function loadRevenue() {
         const sales = JSON.parse(localStorage.getItem("salesData")) || [];
         const tbody = document.getElementById("revenueTableBody");
         tbody.innerHTML = "";
         let totalRevenue = 0;
+        let uniqueCust = new Set();
         [...sales].reverse().forEach((item) => {
           totalRevenue += item.total;
+          if (item.customerName !== "Khách lẻ")
+            uniqueCust.add(item.customerName);
           let itemsList = item.items
             .map((i) => `${i.plainName} (x${i.qty})`)
-            .join("; ");
+            .join("<br>");
           let discountText =
             item.discount > 0
               ? `-${item.discount.toLocaleString()}đ <br><small>(${item.promo})</small>`
               : "0 đ";
-          tbody.innerHTML += `<tr><td><b>${item.id}</b></td><td>${item.date}</td><td>${item.customerName}</td><td style="font-size: 13px; color: #555;">${itemsList}</td><td style="color:var(--success)">${discountText}</td><td><b style="color:var(--danger)">${item.total.toLocaleString()} đ</b></td><td><button class="btn-danger" onclick="deleteItem('salesData', '${item.id}')">Xóa</button></td></tr>`;
+          tbody.innerHTML += `<tr><td><b>${item.id}</b></td><td>${item.date}</td><td><span class="badge badge-success">${item.table || "Mang đi"}</span></td><td>${item.customerName}</td><td style="font-size:13px; color:#555;">${itemsList}</td><td style="font-size:12px">${item.payment}</td><td><b style="color:var(--danger)">${item.total.toLocaleString()} đ</b></td></tr>`;
         });
-        document.getElementById("revTotal").innerText =
+        document.getElementById("repTotal").innerText =
           totalRevenue.toLocaleString() + " đ";
-        document.getElementById("revCount").innerText = sales.length;
-        document.getElementById("revAverage").innerText =
-          (sales.length > 0
-            ? Math.floor(totalRevenue / sales.length)
-            : 0
-          ).toLocaleString() + " đ";
+        document.getElementById("repCount").innerText = sales.length;
+        document.getElementById("repCust").innerText = uniqueCust.size;
       }
 
-      // --- CÁC PHÂN HỆ KHÁC (Nhân sự, Lương, Khách, Kho, Món) ---
-      let editMenuId = null,
-        editStaffId = null,
-        editCustId = null;
-      function loadSalaryTab() {
-        const staff = JSON.parse(localStorage.getItem("staffData")) || [];
-        const select = document.getElementById("sh_staff");
-        select.innerHTML = '<option value="">-- Chọn Nhân Viên --</option>';
-        staff.forEach((s) => {
-          select.innerHTML += `<option value="${s.id}">${s.name} (${s.role})</option>`;
-        });
-        document.getElementById("sh_date").valueAsDate = new Date();
-        loadTable(
-          "shiftData",
-          "shiftTableBody",
-          (item) =>
-            `<tr><td>${item.date}</td><td><b>${item.staffName}</b></td><td>${item.type}</td><td>${item.hours} giờ</td><td><button class="btn-danger" onclick="deleteItem('shiftData', '${item.id}')">Xóa</button></td></tr>`,
-        );
-      }
-      function saveShift(e) {
-        e.preventDefault();
-        const staffId = document.getElementById("sh_staff").value;
-        const staff = JSON.parse(localStorage.getItem("staffData")).find(
-          (s) => s.id === staffId,
-        );
-        let d = JSON.parse(localStorage.getItem("shiftData")) || [];
-        d.push({
-          id: generateID("CA"),
-          date: document.getElementById("sh_date").value,
-          staffId: staffId,
-          staffName: staff.name,
-          type: document.getElementById("sh_type").value,
-          hours: parseInt(document.getElementById("sh_hours").value),
-        });
-        localStorage.setItem("shiftData", JSON.stringify(d));
-        loadSalaryTab();
-        alert("Đã lưu ca làm thành công!");
-      }
-      function calculateSalary() {
-        const shifts = JSON.parse(localStorage.getItem("shiftData")) || [];
-        const staffDB = JSON.parse(localStorage.getItem("staffData")) || [];
-        const tbody = document.getElementById("salaryTableBody");
+      function loadInventoryAlert() {
+        const inv = JSON.parse(localStorage.getItem("inventoryData")) || [];
+        const tbody = document.getElementById("inventoryAlertBody");
         tbody.innerHTML = "";
-        let salaryMap = {};
-        shifts.forEach((sh) => {
-          if (!salaryMap[sh.staffId]) salaryMap[sh.staffId] = 0;
-          salaryMap[sh.staffId] += sh.hours;
-        });
-        staffDB.forEach((staff) => {
-          if (salaryMap[staff.id]) {
-            let totalHours = salaryMap[staff.id];
-            let totalSalary = totalHours * (staff.wage || 0);
-            tbody.innerHTML += `<tr><td><b>${staff.name}</b> <br><small>Lương/h: ${staff.wage.toLocaleString()}đ</small></td><td>${totalHours} giờ</td><td><b style="color:var(--success); font-size: 16px;">${totalSalary.toLocaleString()} đ</b></td></tr>`;
+        inv.forEach((item) => {
+          if (item.qty <= 10) {
+            tbody.innerHTML += `<tr><td><b>${item.name}</b></td><td>${item.qty} ${item.unit}</td><td><span class="badge badge-danger">Sắp hết</span></td></tr>`;
           }
         });
-        if (Object.keys(salaryMap).length === 0)
-          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center">Chưa có dữ liệu ca làm việc.</td></tr>`;
+        if (tbody.innerHTML === "")
+          tbody.innerHTML =
+            '<tr><td colspan="3" style="text-align:center; color:gray">Kho nguyên liệu vẫn ổn định.</td></tr>';
       }
+
+      // --- 6. CÁC HÀM CRUD ---
 
       function loadMenu() {
         loadTable(
           "menuData",
           "menuTableBody",
           (item) =>
-            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.category}</td><td>${item.price.toLocaleString()} đ</td><td><button class="btn-warning" onclick="editMenu('${item.id}')">Sửa</button> <button class="btn-danger" onclick="deleteItem('menuData', '${item.id}')">Xóa</button></td></tr>`,
+            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.category}</td><td>${item.price.toLocaleString()} đ</td><td style="font-size:12px; color:gray">${item.recipe || "-"}</td><td><button class="btn-warning btn-sm" onclick="editMenu('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('menuData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
         );
       }
       function saveMenu(e) {
@@ -1358,15 +1935,17 @@
           d[i].name = document.getElementById("m_name").value;
           d[i].category = document.getElementById("m_category").value;
           d[i].price = parseInt(document.getElementById("m_price").value);
+          d[i].recipe = document.getElementById("m_recipe").value;
         } else
           d.push({
             id: generateID("M"),
             name: document.getElementById("m_name").value,
             category: document.getElementById("m_category").value,
             price: parseInt(document.getElementById("m_price").value),
+            recipe: document.getElementById("m_recipe").value,
           });
         localStorage.setItem("menuData", JSON.stringify(d));
-        cancelEdit("menu");
+        closeModal("modalMenu");
         loadMenu();
       }
       function editMenu(id) {
@@ -1376,10 +1955,10 @@
         document.getElementById("m_name").value = d.name;
         document.getElementById("m_category").value = d.category;
         document.getElementById("m_price").value = d.price;
+        document.getElementById("m_recipe").value = d.recipe || "";
         editMenuId = id;
-        document.getElementById("menuFormTitle").innerText = "Cập nhật món";
-        document.getElementById("btnSubmitMenu").innerText = "Cập nhật";
-        document.getElementById("btnCancelMenu").style.display = "inline-block";
+        document.getElementById("modalMenuTitle").innerText = "Cập nhật món";
+        openModal("modalMenu");
       }
 
       function loadStaff() {
@@ -1387,7 +1966,7 @@
           "staffData",
           "staffTableBody",
           (item) =>
-            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td>${item.role}</td><td>${(item.wage || 0).toLocaleString()}đ</td><td><button class="btn-warning" onclick="editStaff('${item.id}')">Sửa</button> <button class="btn-danger" onclick="deleteItem('staffData', '${item.id}')">Xóa</button></td></tr>`,
+            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.role}</td><td>${(item.wage || 0).toLocaleString()}đ/h</td><td><button class="btn-warning btn-sm" onclick="editStaff('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('staffData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
         );
       }
       function saveStaff(e) {
@@ -1408,7 +1987,7 @@
             wage: parseInt(document.getElementById("s_wage").value),
           });
         localStorage.setItem("staffData", JSON.stringify(d));
-        cancelEdit("staff");
+        closeModal("modalStaff");
         loadStaff();
       }
       function editStaff(id) {
@@ -1420,11 +1999,9 @@
         document.getElementById("s_role").value = d.role;
         document.getElementById("s_wage").value = d.wage || 0;
         editStaffId = id;
-        document.getElementById("staffFormTitle").innerText =
+        document.getElementById("modalStaffTitle").innerText =
           "Cập nhật Nhân viên";
-        document.getElementById("btnSubmitStaff").innerText = "Cập nhật";
-        document.getElementById("btnCancelStaff").style.display =
-          "inline-block";
+        openModal("modalStaff");
       }
 
       function loadCustomer() {
@@ -1432,39 +2009,47 @@
           "customerData",
           "customerTableBody",
           (item) =>
-            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td><span style="color:var(--danger); font-weight:bold">${item.points || 0}</span></td><td><button class="btn-warning" onclick="editCustomer('${item.id}')">Sửa</button> <button class="btn-danger" onclick="deleteItem('customerData', '${item.id}')">Xóa</button></td></tr>`,
+            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td><span style="color:var(--danger); font-weight:bold">${item.points || 0}</span></td><td><span class="badge ${item.tier === "Kim Cương" ? "bg-purple" : item.tier === "Vàng" ? "bg-warning" : "bg-primary"}">${item.tier || "Bạc"}</span></td><td><button class="btn-danger btn-sm" onclick="deleteItem('customerData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
         );
       }
       function saveCustomer(e) {
         e.preventDefault();
         let data = JSON.parse(localStorage.getItem("customerData")) || [];
-        if (editCustId) {
-          const idx = data.findIndex((i) => i.id === editCustId);
-          data[idx].name = document.getElementById("c_name").value;
-          data[idx].phone = document.getElementById("c_phone").value;
-        } else {
-          data.push({
-            id: generateID("KH"),
-            name: document.getElementById("c_name").value,
-            phone: document.getElementById("c_phone").value,
-            points: 0,
-          });
-        }
+        data.push({
+          id: generateID("KH"),
+          name: document.getElementById("c_name").value,
+          phone: document.getElementById("c_phone").value,
+          points: 0,
+          tier: "Bạc",
+        });
         localStorage.setItem("customerData", JSON.stringify(data));
-        cancelEdit("customer");
+        closeModal("modalCustomer");
         loadCustomer();
       }
-      function editCustomer(id) {
-        const data = JSON.parse(localStorage.getItem("customerData")).find(
-          (i) => i.id === id,
+
+      function loadPromo() {
+        loadTable(
+          "promoData",
+          "promoTableBody",
+          (item) =>
+            `<tr><td><b>${item.code}</b></td><td>${item.name}</td><td>${item.type === "percent" ? "Phần trăm (%)" : "Tiền mặt (VNĐ)"}</td><td style="color:var(--danger); font-weight:bold;">${item.type === "percent" ? item.value + " %" : item.value.toLocaleString() + " đ"}</td><td><button class="btn-danger btn-sm" onclick="deleteItem('promoData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
         );
-        document.getElementById("c_name").value = data.name;
-        document.getElementById("c_phone").value = data.phone;
-        editCustId = id;
-        document.getElementById("custFormTitle").innerText =
-          "Cập nhật Khách hàng";
-        document.getElementById("btnSubmitCust").innerText = "Cập nhật";
-        document.getElementById("btnCancelCust").style.display = "inline-block";
+      }
+      function savePromo(e) {
+        e.preventDefault();
+        let d = JSON.parse(localStorage.getItem("promoData")) || [];
+        let code = document.getElementById("pr_code").value.toUpperCase();
+        if (d.some((p) => p.code === code)) return alert("Mã KM đã tồn tại!");
+        d.push({
+          id: generateID("PR"),
+          code: code,
+          name: document.getElementById("pr_name").value,
+          type: document.getElementById("pr_type").value,
+          value: parseInt(document.getElementById("pr_value").value),
+        });
+        localStorage.setItem("promoData", JSON.stringify(d));
+        closeModal("modalPromo");
+        loadPromo();
       }
 
       function loadInventory() {
@@ -1472,7 +2057,7 @@
           "inventoryData",
           "inventoryTableBody",
           (item) =>
-            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.qty}</td><td>${item.unit}</td><td><button class="btn-danger" onclick="deleteItem('inventoryData', '${item.id}')">Xóa</button></td></tr>`,
+            `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td><b style="${item.qty <= 10 ? "color:red" : ""}">${item.qty}</b></td><td>${item.unit}</td><td><button class="btn-danger btn-sm" onclick="deleteItem('inventoryData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
         );
       }
       function saveInventory(e) {
@@ -1481,12 +2066,34 @@
         d.push({
           id: generateID("KHO"),
           name: document.getElementById("i_name").value,
-          qty: document.getElementById("i_qty").value,
+          qty: parseInt(document.getElementById("i_qty").value),
           unit: document.getElementById("i_unit").value,
         });
         localStorage.setItem("inventoryData", JSON.stringify(d));
-        document.getElementById("formInventory").reset();
+        closeModal("modalInventory");
         loadInventory();
+      }
+
+      function loadSupplier() {
+        loadTable(
+          "supplierData",
+          "supplierTableBody",
+          (item) =>
+            `<tr><td><b>${item.name}</b></td><td>${item.phone}</td><td style="font-size:12px">${item.desc}</td><td><button class="btn-danger btn-sm" onclick="deleteItem('supplierData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+        );
+      }
+      function saveSupplier(e) {
+        e.preventDefault();
+        let d = JSON.parse(localStorage.getItem("supplierData")) || [];
+        d.push({
+          id: generateID("NCC"),
+          name: document.getElementById("sup_name").value,
+          phone: document.getElementById("sup_phone").value,
+          desc: document.getElementById("sup_desc").value,
+        });
+        localStorage.setItem("supplierData", JSON.stringify(d));
+        closeModal("modalSupplier");
+        loadSupplier();
       }
 
       function loadSpoilage() {
@@ -1507,13 +2114,98 @@
           reason: document.getElementById("sp_reason").value,
         });
         localStorage.setItem("spoilageData", JSON.stringify(d));
-        document.getElementById("formSpoilage").reset();
+        closeModal("modalSpoilage");
         loadSpoilage();
       }
 
-      // --- HÀM XÓA & HỦY SỬA ---
+      function saveInvCheck(e) {
+        e.preventDefault();
+        let d = JSON.parse(localStorage.getItem("inventoryData")) || [];
+        let itemId = document.getElementById("chk_item").value;
+        let newQty = parseInt(document.getElementById("chk_qty").value);
+        let index = d.findIndex((i) => i.id === itemId);
+        if (index !== -1) {
+          d[index].qty = newQty;
+          localStorage.setItem("inventoryData", JSON.stringify(d));
+          alert("Đã cập nhật lại Tồn kho thực tế!");
+          closeModal("modalInvCheck");
+          loadInventory();
+        }
+      }
+
+      // --- CẬP NHẬT: TÁCH RIÊNG LOAD BẢNG LƯƠNG VÀ BẢNG CHỐT CA ---
+      function loadSalaryTab() {
+        loadTable(
+          "shiftData",
+          "shiftTableBody",
+          (item) =>
+            `<tr><td>${item.date}</td><td><b>${item.staffName}</b></td><td>${item.type}</td><td>${item.hours} giờ</td><td><button class="btn-danger btn-sm" onclick="deleteItem('shiftData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+        );
+      }
+      function loadShiftClose() {
+        loadTable(
+          "shiftCloseData",
+          "shiftCloseTableBody",
+          (item) =>
+            `<tr><td>${item.date}</td><td><b>${item.staff}</b></td><td>${item.shift}</td><td style="color:var(--success); font-weight:bold">${item.money.toLocaleString()} đ</td></tr>`,
+        );
+      }
+
+      function saveShift(e) {
+        e.preventDefault();
+        const staffId = document.getElementById("sh_staff").value;
+        const staff = JSON.parse(localStorage.getItem("staffData")).find(
+          (s) => s.id === staffId,
+        );
+        let d = JSON.parse(localStorage.getItem("shiftData")) || [];
+        d.push({
+          id: generateID("CA"),
+          date: document.getElementById("sh_date").value,
+          staffId: staffId,
+          staffName: staff.name,
+          type: document.getElementById("sh_type").value,
+          hours: parseInt(document.getElementById("sh_hours").value),
+        });
+        localStorage.setItem("shiftData", JSON.stringify(d));
+        closeModal("modalShift");
+        loadSalaryTab();
+      }
+      function saveShiftClose(e) {
+        e.preventDefault();
+        let d = JSON.parse(localStorage.getItem("shiftCloseData")) || [];
+        d.push({
+          id: generateID("CHOT"),
+          date: new Date().toLocaleString(),
+          staff: document.getElementById("cl_staff").value,
+          shift: document.getElementById("cl_type").value,
+          money: parseInt(document.getElementById("cl_money").value),
+        });
+        localStorage.setItem("shiftCloseData", JSON.stringify(d));
+        closeModal("modalShiftClose");
+        loadShiftClose();
+        alert("Đã chốt ca và bàn giao tiền!");
+      }
+      function calculateSalary() {
+        const shifts = JSON.parse(localStorage.getItem("shiftData")) || [];
+        const staffDB = JSON.parse(localStorage.getItem("staffData")) || [];
+        const tbody = document.getElementById("salaryTableBody");
+        tbody.innerHTML = "";
+        let salaryMap = {};
+        shifts.forEach((sh) => {
+          if (!salaryMap[sh.staffId]) salaryMap[sh.staffId] = 0;
+          salaryMap[sh.staffId] += sh.hours;
+        });
+        staffDB.forEach((staff) => {
+          if (salaryMap[staff.id]) {
+            let totalHours = salaryMap[staff.id];
+            let totalSalary = totalHours * (staff.wage || 0);
+            tbody.innerHTML += `<tr><td><b>${staff.name}</b> <br><small>Lương/h: ${staff.wage.toLocaleString()}đ</small></td><td>${totalHours} giờ</td><td><b style="color:var(--success); font-size: 16px;">${totalSalary.toLocaleString()} đ</b></td></tr>`;
+          }
+        });
+      }
+
       function deleteItem(storageKey, id) {
-        if (confirm("Xác nhận xóa dữ liệu này?")) {
+        if (confirm("Xác nhận xóa?")) {
           let d = JSON.parse(localStorage.getItem(storageKey)).filter(
             (i) => i.id !== id,
           );
@@ -1524,7 +2216,6 @@
           }
           if (storageKey === "staffData") {
             loadStaff();
-            loadSalaryTab();
           }
           if (storageKey === "customerData") {
             loadCustomer();
@@ -1533,40 +2224,7 @@
           if (storageKey === "promoData") loadPromo();
           if (storageKey === "inventoryData") loadInventory();
           if (storageKey === "shiftData") loadSalaryTab();
-          if (storageKey === "salesData") loadRevenue();
-        }
-      }
-      function cancelEdit(type) {
-        if (type === "menu") {
-          document.getElementById("formMenu").reset();
-          editMenuId = null;
-          document.getElementById("menuFormTitle").innerText = "Thêm món mới";
-          document.getElementById("btnSubmitMenu").innerText = "Lưu";
-          document.getElementById("btnCancelMenu").style.display = "none";
-        }
-        if (type === "staff") {
-          document.getElementById("formStaff").reset();
-          editStaffId = null;
-          document.getElementById("staffFormTitle").innerText =
-            "Thêm nhân viên";
-          document.getElementById("btnSubmitStaff").innerText = "Lưu";
-          document.getElementById("btnCancelStaff").style.display = "none";
-        }
-        if (type === "customer") {
-          document.getElementById("formCustomer").reset();
-          editCustId = null;
-          document.getElementById("custFormTitle").innerText =
-            "Thêm khách hàng";
-          document.getElementById("btnSubmitCust").innerText = "Lưu";
-          document.getElementById("btnCancelCust").style.display = "none";
-        }
-        if (type === "promo") {
-          document.getElementById("formPromo").reset();
-          editPromoId = null;
-          document.getElementById("promoFormTitle").innerText =
-            "Tạo Mã Khuyến Mãi Mới";
-          document.getElementById("btnSubmitPromo").innerText = "Lưu Mã";
-          document.getElementById("btnCancelPromo").style.display = "none";
+          if (storageKey === "supplierData") loadSupplier();
         }
       }
 
@@ -1577,10 +2235,14 @@
       loadCustomer();
       loadPromo();
       loadInventory();
+      loadSupplier();
       loadSpoilage();
       loadPOSMenu();
       loadRevenue();
+      drawCharts();
+      loadInventoryAlert();
       loadSalaryTab();
+      loadShiftClose(); // Tải sẵn dữ liệu chốt ca ngầm
     </script>
   </body>
 </html>
