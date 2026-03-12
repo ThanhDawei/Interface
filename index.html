@@ -31,6 +31,7 @@
         overflow: hidden;
       }
 
+      /* --- MÀN HÌNH ĐĂNG NHẬP --- */
       .login-screen {
         position: fixed;
         top: 0;
@@ -81,6 +82,7 @@
         margin-top: 10px;
       }
 
+      /* Dashboard */
       .dashboard-container {
         display: none;
         height: 100vh;
@@ -143,6 +145,7 @@
         color: var(--primary);
       }
 
+      /* UI Components */
       .card {
         background: white;
         padding: 20px;
@@ -279,6 +282,7 @@
         }
       }
 
+      /* MODALS */
       .modal {
         display: none;
         position: fixed;
@@ -347,6 +351,7 @@
         }
       }
 
+      /* KDS */
       .kitchen-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -374,6 +379,7 @@
         background: #e74c3c;
       }
 
+      /* POS & Thống kê */
       .pos-grid {
         display: grid;
         grid-template-columns: 1.8fr 1.2fr;
@@ -1776,11 +1782,28 @@
         return "I" + initials + ".png";
       }
 
-      // CẦN NẠP LẠI JSON DATA MẪU NẾU LÀ LẦN ĐẦU
-      function initDB() {
-        // (Hệ thống dùng DB mẫu cũ hoặc DB bạn đã chèn)
-        if (!localStorage.getItem("categoryData")) {
-          // Bạn có thể tải JSON mẫu vào đây nếu cần
+      // TỰ ĐỘNG FETCH DATA TỪ FILE DATA.JSON
+      async function initDB() {
+        // Chỉ load nếu categoryData trống
+        if (
+          !localStorage.getItem("categoryData") ||
+          JSON.parse(localStorage.getItem("categoryData")).length === 0
+        ) {
+          try {
+            const response = await fetch("data.json");
+            if (!response.ok) throw new Error("Không thể tải file data.json");
+            const mockData = await response.json();
+
+            for (let key in mockData) {
+              localStorage.setItem(key, JSON.stringify(mockData[key]));
+            }
+            console.log("Đã import dữ liệu thành công từ data.json!");
+          } catch (error) {
+            console.warn(
+              "Lỗi khi đọc file data.json. Yêu cầu chạy thông qua Live Server để không bị lỗi CORS chặn đọc file.",
+              error,
+            );
+          }
         }
       }
 
@@ -2133,10 +2156,9 @@
         }
       }
 
-      // TÍNH NĂNG MỚI: Xóa món khỏi giỏ hàng
       function removeFromCart(idx) {
         currentCart.splice(idx, 1);
-        if (currentCart.length === 0) appliedPromoObj = null; // Bỏ khuyến mãi nếu giỏ trống
+        if (currentCart.length === 0) appliedPromoObj = null;
         renderCart();
       }
 
@@ -2219,7 +2241,6 @@
         syncToDisplay("ORDERING");
       }
 
-      // ĐỒNG BỘ HIỂN THỊ CÓ TRẠNG THÁI
       function syncToDisplay(status = "ORDERING") {
         if (status === "PAID") {
           localStorage.setItem(
@@ -2380,7 +2401,6 @@
           document.getElementById("billCashArea").style.display = "none";
         }
 
-        // GỬI LỆNH ĐÃ THANH TOÁN SANG DISPLAY
         syncToDisplay("PAID");
 
         openModal("modalReceipt");
@@ -2404,7 +2424,6 @@
         loadPOSMenu();
         loadKitchen();
         loadInventory();
-        // renderCart() sẽ tự động reset display sang IDLE
       }
 
       function loadKitchen() {
@@ -2935,6 +2954,7 @@
         });
       }
 
+      // Tự động khởi chạy database khi trang tải
       initDB();
     </script>
   </body>
