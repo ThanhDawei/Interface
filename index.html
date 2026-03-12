@@ -31,7 +31,6 @@
         overflow: hidden;
       }
 
-      /* --- MÀN HÌNH ĐĂNG NHẬP --- */
       .login-screen {
         position: fixed;
         top: 0;
@@ -82,7 +81,6 @@
         margin-top: 10px;
       }
 
-      /* Dashboard */
       .dashboard-container {
         display: none;
         height: 100vh;
@@ -145,7 +143,6 @@
         color: var(--primary);
       }
 
-      /* UI Components */
       .card {
         background: white;
         padding: 20px;
@@ -282,7 +279,6 @@
         }
       }
 
-      /* MODALS */
       .modal {
         display: none;
         position: fixed;
@@ -351,7 +347,6 @@
         }
       }
 
-      /* KDS */
       .kitchen-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -379,7 +374,6 @@
         background: #e74c3c;
       }
 
-      /* POS & Thống kê */
       .pos-grid {
         display: grid;
         grid-template-columns: 1.8fr 1.2fr;
@@ -451,12 +445,14 @@
       .bg-warning {
         background: linear-gradient(135deg, #f39c12, #d35400);
       }
+
       .badge {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 11px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
         font-weight: bold;
         color: white;
+        display: inline-block;
       }
       .badge-danger {
         background: var(--danger);
@@ -466,9 +462,32 @@
       }
       .badge-warning {
         background: var(--warning);
+        color: #333;
+      }
+      .badge-primary {
+        background: var(--primary);
       }
 
-      /* Caculate Change Box */
+      .badge-kimcuong {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: white;
+        box-shadow: 0 2px 5px rgba(155, 89, 182, 0.4);
+        border: 1px solid #8e44ad;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      }
+      .badge-vang {
+        background: linear-gradient(135deg, #f1c40f, #f39c12);
+        color: white;
+        box-shadow: 0 2px 5px rgba(241, 196, 15, 0.4);
+        border: 1px solid #f39c12;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      }
+      .badge-bac {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        color: white;
+        border: 1px solid #7f8c8d;
+      }
+
       .cash-box {
         display: none;
         background: #e8f4f8;
@@ -486,7 +505,6 @@
         font-weight: bold;
       }
 
-      /* Print Receipt */
       @media print {
         body * {
           visibility: hidden;
@@ -601,9 +619,8 @@
         <div class="menu-item" onclick="switchTab('tab-customer', this)">
           <i class="fas fa-users"></i>Quản lý Khách hàng
         </div>
-
         <div class="menu-item" onclick="switchTab('tab-salary', this)">
-          <i class="fas fa-user-clock"></i>Quản lý Ca & Lương
+          <i class="fas fa-user-clock"></i>Quản lý Ca & Bàn giao
         </div>
 
         <div
@@ -669,7 +686,7 @@
               <div class="card">
                 <div class="card-header">
                   <h3 style="margin: 0">
-                    <i class="fas fa-concierge-bell"></i> Tiếp nhận Order (D2.1)
+                    <i class="fas fa-concierge-bell"></i> Tiếp nhận Order
                   </h3>
                 </div>
                 <div class="form-group">
@@ -726,7 +743,15 @@
                   min-height: 150px;
                 "
               >
-                <table>
+                <table style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th style="text-align: left">Món</th>
+                      <th style="text-align: center">SL</th>
+                      <th style="text-align: right">Tiền</th>
+                      <th style="text-align: center">Xóa</th>
+                    </tr>
+                  </thead>
                   <tbody id="cartTableBody"></tbody>
                 </table>
               </div>
@@ -788,7 +813,10 @@
                 <select
                   id="pos_paymentMethod"
                   style="width: 100%; margin-top: 10px; padding: 8px"
-                  onchange="toggleCashInput()"
+                  onchange="
+                    toggleCashInput();
+                    syncToDisplay();
+                  "
                 >
                   <option value="Chuyển khoản">
                     💳 Chuyển khoản / Quẹt thẻ
@@ -956,7 +984,7 @@
                     <input
                       type="number"
                       id="cl_money"
-                      placeholder="Nhập số tiền mặt đếm được..."
+                      placeholder="Nhập số tiền đếm được..."
                       required
                     />
                   </div>
@@ -987,29 +1015,6 @@
                 </tr>
               </thead>
               <tbody id="shiftCloseTableBody"></tbody>
-            </table>
-          </div>
-
-          <div class="card admin-only">
-            <div class="card-header">
-              <h3>
-                <i class="fas fa-money-bill-wave"></i> Bảng Lương Tổng Hợp
-                (Admin)
-              </h3>
-              <button onclick="calculateSalary()" class="btn-success">
-                <i class="fas fa-calculator"></i> Tính Lương Tháng
-              </button>
-            </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Nhân Viên</th>
-                  <th>Tổng Giờ Làm</th>
-                  <th>Lương/Giờ</th>
-                  <th>Tổng Lương Phải Trả</th>
-                </tr>
-              </thead>
-              <tbody id="salaryTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -1101,6 +1106,7 @@
               <thead>
                 <tr>
                   <th>Mã Món</th>
+                  <th>Hình Ảnh</th>
                   <th>Tên Món</th>
                   <th>Danh Mục</th>
                   <th>Giá Gốc (VNĐ)</th>
@@ -1202,6 +1208,9 @@
                   <th>Chương trình</th>
                   <th>Loại giảm</th>
                   <th>Mức giảm</th>
+                  <th>Bắt Đầu</th>
+                  <th>Kết Thúc</th>
+                  <th>Trạng Thái</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
@@ -1461,7 +1470,17 @@
         <form onsubmit="saveMenu(event)">
           <div class="form-group">
             <div class="form-control">
-              <label>Tên món:</label><input type="text" id="m_name" required />
+              <label>Tên món:</label
+              ><input
+                type="text"
+                id="m_name"
+                required
+                onkeyup="
+                  document.getElementById('m_image').value = generateImageName(
+                    this.value,
+                  )
+                "
+              />
             </div>
             <div class="form-control">
               <label>Danh mục:</label
@@ -1474,7 +1493,7 @@
               ><input type="number" id="m_price" required />
             </div>
             <div class="form-control">
-              <label>Nguyên liệu trừ kho (VD: Cafe Hạt):</label
+              <label>Nguyên liệu trừ kho:</label
               ><input
                 type="text"
                 id="m_recipe"
@@ -1482,10 +1501,18 @@
               />
             </div>
           </div>
-          <p style="font-size: 12px; color: gray; margin-top: -5px">
-            (*) Tính năng D4.3: Khi bán món này, kho sẽ tự động trừ đi 1 Đơn vị
-            nguyên liệu tương ứng.
-          </p>
+          <div class="form-group">
+            <div class="form-control">
+              <label>File Hình Ảnh (Tự động tạo):</label>
+              <input
+                type="text"
+                id="m_image"
+                placeholder="Ví dụ: ICPDD.png"
+                style="background: #f4f4f4; color: #555; font-weight: bold"
+                readonly
+              />
+            </div>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -1613,6 +1640,16 @@
               ><input type="number" id="pr_value" required />
             </div>
           </div>
+          <div class="form-group">
+            <div class="form-control">
+              <label>Ngày Bắt Đầu:</label
+              ><input type="date" id="pr_start" required />
+            </div>
+            <div class="form-control">
+              <label>Ngày Kết Thúc:</label
+              ><input type="date" id="pr_end" required />
+            </div>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -1701,7 +1738,6 @@
     </div>
 
     <script>
-      // --- 1. OVERRIDE ALERT & CONFIRM ---
       window.alert = function (msg) {
         document.getElementById("alertMessage").innerText = msg;
         document.getElementById("modalAlert").classList.add("active");
@@ -1724,105 +1760,28 @@
         if (confirmCallback) confirmCallback();
       }
 
-      // --- 2. INIT & LOGIN & RBAC ---
+      function generateImageName(name) {
+        if (!name) return "";
+        let words = name.trim().split(/\s+/);
+        let initials = words
+          .map((word) => {
+            let firstChar = word.charAt(0).toUpperCase();
+            if (firstChar === "Đ") return "D";
+            firstChar = firstChar
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "");
+            return firstChar;
+          })
+          .join("");
+        return "I" + initials + ".png";
+      }
+
+      // CẦN NẠP LẠI JSON DATA MẪU NẾU LÀ LẦN ĐẦU
       function initDB() {
-        if (!localStorage.getItem("categoryData"))
-          localStorage.setItem(
-            "categoryData",
-            JSON.stringify([
-              { id: "C1", name: "Cà Phê" },
-              { id: "C2", name: "Trà Sữa" },
-            ]),
-          );
-        if (!localStorage.getItem("sizeData"))
-          localStorage.setItem(
-            "sizeData",
-            JSON.stringify([
-              { id: "SZ1", name: "S", val: -10 },
-              { id: "SZ2", name: "M", val: 0 },
-              { id: "SZ3", name: "L", val: 20 },
-            ]),
-          );
-        if (!localStorage.getItem("toppingData"))
-          localStorage.setItem(
-            "toppingData",
-            JSON.stringify([
-              { id: "TP1", name: "Trân châu", val: 5000 },
-              { id: "TP2", name: "Kem Cheese", val: 10000 },
-            ]),
-          );
-        if (!localStorage.getItem("tableData"))
-          localStorage.setItem(
-            "tableData",
-            JSON.stringify([
-              { id: "TB1", name: "Mang đi" },
-              { id: "TB2", name: "Giao hàng (App)" },
-              { id: "TB3", name: "Bàn 01" },
-            ]),
-          );
-        if (!localStorage.getItem("menuData"))
-          localStorage.setItem(
-            "menuData",
-            JSON.stringify([
-              {
-                id: "M-1",
-                name: "Cà Phê Đen",
-                category: "Cà Phê",
-                price: 20000,
-                recipe: "Cafe Hạt",
-              },
-            ]),
-          );
-        if (!localStorage.getItem("kitchenData"))
-          localStorage.setItem("kitchenData", JSON.stringify([]));
-        if (!localStorage.getItem("salesData"))
-          localStorage.setItem("salesData", JSON.stringify([]));
-        if (!localStorage.getItem("customerData"))
-          localStorage.setItem("customerData", JSON.stringify([]));
-        if (!localStorage.getItem("staffData"))
-          localStorage.setItem(
-            "staffData",
-            JSON.stringify([
-              {
-                id: "NV-1",
-                name: "Trần Văn Demo",
-                phone: "0901",
-                role: "Thu ngân",
-                wage: 25000,
-              },
-            ]),
-          );
-        if (!localStorage.getItem("promoData"))
-          localStorage.setItem(
-            "promoData",
-            JSON.stringify([
-              {
-                id: "PR-1",
-                code: "GIAM10K",
-                name: "Giảm 10K",
-                type: "amount",
-                value: 10000,
-              },
-            ]),
-          );
-        if (!localStorage.getItem("supplierData"))
-          localStorage.setItem(
-            "supplierData",
-            JSON.stringify([{ id: "NCC-1", name: "Đại lý Trung Nguyên" }]),
-          );
-        if (!localStorage.getItem("inventoryData"))
-          localStorage.setItem(
-            "inventoryData",
-            JSON.stringify([
-              {
-                id: "KHO-1",
-                name: "Cafe Hạt",
-                qty: 50,
-                unit: "kg",
-                supplierId: "NCC-1",
-              },
-            ]),
-          );
+        // (Hệ thống dùng DB mẫu cũ hoặc DB bạn đã chèn)
+        if (!localStorage.getItem("categoryData")) {
+          // Bạn có thể tải JSON mẫu vào đây nếu cần
+        }
       }
 
       let currentRole = "";
@@ -1861,9 +1820,9 @@
         loadPromo();
         loadInventory();
         loadKitchen();
+        loadSalaryTab();
       }
 
-      // --- 3. UI TABS & MODALS ---
       function switchTab(tabId, element) {
         document
           .querySelectorAll(".content-section")
@@ -1890,7 +1849,6 @@
 
       function openModal(id) {
         document.getElementById(id).classList.add("active");
-
         if (id === "modalMenu") {
           const cats = JSON.parse(localStorage.getItem("categoryData")) || [];
           const sel = document.getElementById("m_category");
@@ -1900,7 +1858,6 @@
               (sel.innerHTML += `<option value="${c.name}">${c.name}</option>`),
           );
         }
-
         if (id === "modalInventory") {
           const sups = JSON.parse(localStorage.getItem("supplierData")) || [];
           const selSup = document.getElementById("i_supplier");
@@ -1915,6 +1872,16 @@
             '<option value="">-- Vui lòng chọn NCC trước --</option>';
           document.getElementById("new_item_group").style.display = "none";
           document.getElementById("i_name").removeAttribute("required");
+        }
+        if (id === "modalPromo") {
+          if (!editPromoId) {
+            const todayStr = new Date().toISOString().split("T")[0];
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            const nextMonthStr = nextMonth.toISOString().split("T")[0];
+            document.getElementById("pr_start").value = todayStr;
+            document.getElementById("pr_end").value = nextMonthStr;
+          }
         }
       }
       function closeModal(id) {
@@ -1944,37 +1911,43 @@
         }
       }
 
-      // --- 4. CẤU HÌNH ĐỘNG (SETTINGS) ---
+      // --- CẤU HÌNH ĐỘNG (SETTINGS) ---
       let currentCfgType = "";
       function loadConfigTables() {
         const renderRow = (k, item, valText) =>
           `<tr><td>${item.name}</td><td>${valText}</td><td><button class="btn-danger btn-sm" onclick="delCfg('${k}', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
-        document.getElementById("cfgCatBody").innerHTML = JSON.parse(
-          localStorage.getItem("categoryData"),
-        )
-          .map(
-            (c) =>
-              `<tr><td>${c.name}</td><td><button class="btn-danger btn-sm" onclick="delCfg('categoryData', '${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+        if (localStorage.getItem("categoryData"))
+          document.getElementById("cfgCatBody").innerHTML = JSON.parse(
+            localStorage.getItem("categoryData"),
           )
-          .join("");
-        document.getElementById("cfgTableBody").innerHTML = JSON.parse(
-          localStorage.getItem("tableData"),
-        )
-          .map(
-            (t) =>
-              `<tr><td>${t.name}</td><td><button class="btn-danger btn-sm" onclick="delCfg('tableData', '${t.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+            .map(
+              (c) =>
+                `<tr><td>${c.name}</td><td><button class="btn-danger btn-sm" onclick="delCfg('categoryData', '${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+            )
+            .join("");
+        if (localStorage.getItem("tableData"))
+          document.getElementById("cfgTableBody").innerHTML = JSON.parse(
+            localStorage.getItem("tableData"),
           )
-          .join("");
-        document.getElementById("cfgSizeBody").innerHTML = JSON.parse(
-          localStorage.getItem("sizeData"),
-        )
-          .map((s) => renderRow("sizeData", s, s.val + "%"))
-          .join("");
-        document.getElementById("cfgTopBody").innerHTML = JSON.parse(
-          localStorage.getItem("toppingData"),
-        )
-          .map((t) => renderRow("toppingData", t, t.val.toLocaleString() + "đ"))
-          .join("");
+            .map(
+              (t) =>
+                `<tr><td>${t.name}</td><td><button class="btn-danger btn-sm" onclick="delCfg('tableData', '${t.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+            )
+            .join("");
+        if (localStorage.getItem("sizeData"))
+          document.getElementById("cfgSizeBody").innerHTML = JSON.parse(
+            localStorage.getItem("sizeData"),
+          )
+            .map((s) => renderRow("sizeData", s, s.val + "%"))
+            .join("");
+        if (localStorage.getItem("toppingData"))
+          document.getElementById("cfgTopBody").innerHTML = JSON.parse(
+            localStorage.getItem("toppingData"),
+          )
+            .map((t) =>
+              renderRow("toppingData", t, t.val.toLocaleString() + "đ"),
+            )
+            .join("");
       }
 
       function openConfigModal(type) {
@@ -2020,7 +1993,7 @@
           k = "toppingData";
           obj.val = parseInt(val || 0);
         }
-        let d = JSON.parse(localStorage.getItem(k));
+        let d = JSON.parse(localStorage.getItem(k)) || [];
         d.push(obj);
         localStorage.setItem(k, JSON.stringify(d));
         closeModal("modalConfig");
@@ -2042,11 +2015,11 @@
         );
       }
 
-      // --- 5. BÁN HÀNG & KDS ---
+      // --- BÁN HÀNG & KDS ---
       let currentCart = [];
       let appliedPromoObj = null;
       function loadPOSMenu() {
-        const cats = JSON.parse(localStorage.getItem("categoryData"));
+        const cats = JSON.parse(localStorage.getItem("categoryData")) || [];
         const cSel = document.getElementById("pos_categorySelect");
         cSel.innerHTML = '<option value="ALL">Tất cả</option>';
         cats.forEach(
@@ -2054,7 +2027,7 @@
             (cSel.innerHTML += `<option value="${c.name}">${c.name}</option>`),
         );
 
-        const sizes = JSON.parse(localStorage.getItem("sizeData"));
+        const sizes = JSON.parse(localStorage.getItem("sizeData")) || [];
         const sBox = document.getElementById("pos_size_box");
         sBox.innerHTML = "";
         sizes.forEach(
@@ -2062,7 +2035,7 @@
             (sBox.innerHTML += `<label><input type="radio" name="pos_size" value="${s.val}" ${i === 1 ? "checked" : ""}> ${s.name} (${s.val > 0 ? "+" : ""}${s.val}%)</label>`),
         );
 
-        const tops = JSON.parse(localStorage.getItem("toppingData"));
+        const tops = JSON.parse(localStorage.getItem("toppingData")) || [];
         const tBox = document.getElementById("pos_topping_box");
         tBox.innerHTML = "";
         tops.forEach(
@@ -2070,7 +2043,7 @@
             (tBox.innerHTML += `<label><input type="checkbox" class="pos_topping" value="${t.name}" data-price="${t.val}"> ${t.name} (+${t.val / 1000}k)</label>`),
         );
 
-        const tbls = JSON.parse(localStorage.getItem("tableData"));
+        const tbls = JSON.parse(localStorage.getItem("tableData")) || [];
         const tSel = document.getElementById("pos_tableSelect");
         tSel.innerHTML = "";
         tbls.forEach(
@@ -2150,11 +2123,21 @@
             baseMenuName: item.name,
             plainName: `${item.name} (Size ${sizeName})`,
             htmlName: htmlName,
+            nameHTML: htmlName,
+            name: item.name,
+            image: item.image,
             qty: qty,
             total: finalPrice * qty,
           });
           renderCart();
         }
+      }
+
+      // TÍNH NĂNG MỚI: Xóa món khỏi giỏ hàng
+      function removeFromCart(idx) {
+        currentCart.splice(idx, 1);
+        if (currentCart.length === 0) appliedPromoObj = null; // Bỏ khuyến mãi nếu giỏ trống
+        renderCart();
       }
 
       function applyPromo() {
@@ -2165,9 +2148,26 @@
         const promoDB = JSON.parse(localStorage.getItem("promoData")) || [];
         const promo = promoDB.find((p) => p.code === codeInput);
         const msgEl = document.getElementById("promoMessage");
-        if (currentCart.length === 0)
+
+        if (currentCart.length === 0) {
           return alert("Vui lòng thêm món vào giỏ!");
+        }
         if (promo) {
+          const today = new Date().toISOString().split("T")[0];
+          if (promo.start && today < promo.start) {
+            appliedPromoObj = null;
+            msgEl.style.color = "var(--warning)";
+            msgEl.innerText = "Mã chưa đến ngày sử dụng!";
+            renderCart();
+            return;
+          }
+          if (promo.end && today > promo.end) {
+            appliedPromoObj = null;
+            msgEl.style.color = "var(--danger)";
+            msgEl.innerText = "Mã khuyến mãi đã hết hạn!";
+            renderCart();
+            return;
+          }
           appliedPromoObj = promo;
           msgEl.style.color = "var(--success)";
           msgEl.innerText = `Đã áp dụng: ${promo.name}`;
@@ -2184,9 +2184,14 @@
         const tbody = document.getElementById("cartTableBody");
         tbody.innerHTML = "";
         let sub = 0;
-        currentCart.forEach((i) => {
+        currentCart.forEach((i, idx) => {
           sub += i.total;
-          tbody.innerHTML += `<tr><td style="padding:8px 0">${i.htmlName}</td><td style="text-align:center">x${i.qty}</td><td style="text-align:right">${i.total.toLocaleString()}đ</td></tr>`;
+          tbody.innerHTML += `<tr>
+                    <td style="padding:8px 0">${i.htmlName}</td>
+                    <td style="text-align:center">x${i.qty}</td>
+                    <td style="text-align:right">${i.total.toLocaleString()}đ</td>
+                    <td style="text-align:center"><button class="btn-danger btn-sm" onclick="removeFromCart(${idx})"><i class="fas fa-times"></i></button></td>
+                </tr>`;
         });
         document.getElementById("cartSubtotal").innerText =
           sub.toLocaleString();
@@ -2211,6 +2216,34 @@
           prm: appliedPromoObj ? appliedPromoObj.code : "",
         };
         calculateChange();
+        syncToDisplay("ORDERING");
+      }
+
+      // ĐỒNG BỘ HIỂN THỊ CÓ TRẠNG THÁI
+      function syncToDisplay(status = "ORDERING") {
+        if (status === "PAID") {
+          localStorage.setItem(
+            "livePosData",
+            JSON.stringify({ cart: [], status: "PAID" }),
+          );
+          return;
+        }
+        if (!window.posData && status !== "PAID") {
+          localStorage.setItem(
+            "livePosData",
+            JSON.stringify({ cart: [], status: "IDLE" }),
+          );
+          return;
+        }
+        const displayData = {
+          cart: currentCart,
+          subtotal: window.posData.sub,
+          discount: window.posData.dis,
+          total: window.posData.tot,
+          payment: document.getElementById("pos_paymentMethod").value,
+          status: status,
+        };
+        localStorage.setItem("livePosData", JSON.stringify(displayData));
       }
 
       function toggleCashInput() {
@@ -2219,6 +2252,7 @@
           method === "Tiền mặt" ? "block" : "none";
         calculateChange();
       }
+
       function calculateChange() {
         if (!window.posData) return;
         const method = document.getElementById("pos_paymentMethod").value;
@@ -2288,7 +2322,6 @@
           loadCustomer();
         }
 
-        // Tự động trừ kho
         let inv = JSON.parse(localStorage.getItem("inventoryData")) || [];
         let menuDB = JSON.parse(localStorage.getItem("menuData")) || [];
         currentCart.forEach((cartItem) => {
@@ -2303,7 +2336,7 @@
         });
         localStorage.setItem("inventoryData", JSON.stringify(inv));
 
-        const sales = JSON.parse(localStorage.getItem("salesData"));
+        const sales = JSON.parse(localStorage.getItem("salesData")) || [];
         sales.push({
           id: bId,
           date: bDate,
@@ -2317,7 +2350,7 @@
         });
         localStorage.setItem("salesData", JSON.stringify(sales));
 
-        const kds = JSON.parse(localStorage.getItem("kitchenData"));
+        const kds = JSON.parse(localStorage.getItem("kitchenData")) || [];
         kds.push({ id: bId, date: bDate, table: tbl, items: currentCart });
         localStorage.setItem("kitchenData", JSON.stringify(kds));
 
@@ -2347,6 +2380,9 @@
           document.getElementById("billCashArea").style.display = "none";
         }
 
+        // GỬI LỆNH ĐÃ THANH TOÁN SANG DISPLAY
+        syncToDisplay("PAID");
+
         openModal("modalReceipt");
         setTimeout(() => {
           if (earnedPoints > 0)
@@ -2368,6 +2404,7 @@
         loadPOSMenu();
         loadKitchen();
         loadInventory();
+        // renderCart() sẽ tự động reset display sang IDLE
       }
 
       function loadKitchen() {
@@ -2400,11 +2437,9 @@
         loadKitchen();
       }
 
-      // --- CA LÀM & CHỐT CA (NHÂN SỰ) ---
+      // --- CA LÀM & CHỐT CA ---
       function loadSalaryTab() {
         const staff = JSON.parse(localStorage.getItem("staffData")) || [];
-
-        // Render selects
         const sel1 = document.getElementById("sh_staff");
         const sel2 = document.getElementById("cl_staff");
         if (sel1) {
@@ -2425,7 +2460,6 @@
         let dateInp = document.getElementById("sh_date");
         if (dateInp) dateInp.valueAsDate = new Date();
 
-        // Load table Chốt ca
         const shiftCloses =
           JSON.parse(localStorage.getItem("shiftCloseData")) || [];
         const tb = document.getElementById("shiftCloseTableBody");
@@ -2476,30 +2510,6 @@
         alert("Đã xác nhận bàn giao tiền két!");
       }
 
-      function calculateSalary() {
-        const shifts = JSON.parse(localStorage.getItem("shiftData")) || [];
-        const staffDB = JSON.parse(localStorage.getItem("staffData")) || [];
-        const tbody = document.getElementById("salaryTableBody");
-        tbody.innerHTML = "";
-        let salaryMap = {};
-        shifts.forEach((sh) => {
-          if (!salaryMap[sh.staffId]) salaryMap[sh.staffId] = 0;
-          salaryMap[sh.staffId] += sh.hours;
-        });
-        let hasData = false;
-        staffDB.forEach((staff) => {
-          if (salaryMap[staff.id]) {
-            hasData = true;
-            let totalHours = salaryMap[staff.id];
-            let totalSalary = totalHours * (staff.wage || 0);
-            tbody.innerHTML += `<tr><td><b>${staff.name}</b></td><td>${totalHours} giờ</td><td>${(staff.wage || 0).toLocaleString()}đ/h</td><td><b style="color:var(--success); font-size: 16px;">${totalSalary.toLocaleString()} đ</b></td></tr>`;
-          }
-        });
-        if (!hasData)
-          tbody.innerHTML =
-            '<tr><td colspan="4" style="text-align:center">Chưa có dữ liệu chấm công.</td></tr>';
-      }
-
       // --- 6. REPORT & CHARTS ---
       function loadRevenue() {
         const sales = JSON.parse(localStorage.getItem("salesData")) || [];
@@ -2510,7 +2520,11 @@
 
         [...sales].reverse().forEach((item) => {
           tot += item.total;
-          if (item.customerName && !item.customerName.includes("Khách lẻ"))
+          if (
+            item.customerName &&
+            !item.customerName.includes("Khách lẻ") &&
+            !item.customerName.includes("Khách mới")
+          )
             uniqueCust.add(item.customerName);
 
           let itemsList = item.items
@@ -2603,24 +2617,26 @@
       // --- 7. CRUD QUẢN LÝ ---
       let editMenuId = null;
       function loadMenu() {
-        document.getElementById("menuTableBody").innerHTML = JSON.parse(
-          localStorage.getItem("menuData"),
-        )
+        let d = JSON.parse(localStorage.getItem("menuData")) || [];
+        document.getElementById("menuTableBody").innerHTML = d
           .map(
             (item) =>
-              `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.category}</td><td>${item.price.toLocaleString()}đ</td><td><span class="badge badge-warning">${item.recipe || "Không"}</span></td><td><button class="btn-warning btn-sm" onclick="editMenu('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('menuData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
+              `<tr><td>${item.id}</td><td><span class="badge badge-primary"><i class="fas fa-image"></i> ${item.image || "Chưa có"}</span></td><td><b>${item.name}</b></td><td>${item.category}</td><td>${item.price.toLocaleString()}đ</td><td><span class="badge badge-warning" style="color:#333">${item.recipe || "Không"}</span></td><td><button class="btn-warning btn-sm" onclick="editMenu('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('menuData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
           )
           .join("");
       }
       function saveMenu(e) {
         e.preventDefault();
-        let d = JSON.parse(localStorage.getItem("menuData"));
+        let d = JSON.parse(localStorage.getItem("menuData")) || [];
         let obj = {
           id: editMenuId ? editMenuId : generateID("M"),
           name: document.getElementById("m_name").value,
           category: document.getElementById("m_category").value,
           price: parseInt(document.getElementById("m_price").value),
           recipe: document.getElementById("m_recipe").value,
+          image:
+            document.getElementById("m_image").value ||
+            generateImageName(document.getElementById("m_name").value),
         };
         if (editMenuId) {
           let idx = d.findIndex((x) => x.id === editMenuId);
@@ -2639,6 +2655,8 @@
         document.getElementById("m_name").value = d.name;
         document.getElementById("m_price").value = d.price;
         document.getElementById("m_recipe").value = d.recipe || "";
+        document.getElementById("m_image").value =
+          d.image || generateImageName(d.name);
         editMenuId = id;
         document.getElementById("modalMenuTitle").innerText = "Sửa Món";
         openModal("modalMenu");
@@ -2649,9 +2667,8 @@
 
       let editStaffId = null;
       function loadStaff() {
-        document.getElementById("staffTableBody").innerHTML = JSON.parse(
-          localStorage.getItem("staffData"),
-        )
+        let d = JSON.parse(localStorage.getItem("staffData")) || [];
+        document.getElementById("staffTableBody").innerHTML = d
           .map(
             (item) =>
               `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td>${item.role}</td><td>${(item.wage || 0).toLocaleString()}đ/h</td><td><button class="btn-warning btn-sm" onclick="editStaff('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('staffData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
@@ -2660,7 +2677,7 @@
       }
       function saveStaff(e) {
         e.preventDefault();
-        let d = JSON.parse(localStorage.getItem("staffData"));
+        let d = JSON.parse(localStorage.getItem("staffData")) || [];
         let obj = {
           id: editStaffId ? editStaffId : generateID("NV"),
           name: document.getElementById("s_name").value,
@@ -2778,13 +2795,20 @@
 
       let editCustId = null;
       function loadCustomer() {
-        document.getElementById("customerTableBody").innerHTML = JSON.parse(
-          localStorage.getItem("customerData"),
-        )
-          .map(
-            (item) =>
-              `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td style="color:var(--danger)">${item.points}</td><td><span class="badge ${item.tier === "Kim Cương" ? "bg-purple" : item.tier === "Vàng" ? "bg-warning" : "bg-primary"}">${item.tier || "Bạc"}</span></td><td><button class="btn-warning btn-sm" onclick="editCustomer('${item.id}')"><i class="fas fa-pen"></i></button></td></tr>`,
-          )
+        const d = JSON.parse(localStorage.getItem("customerData")) || [];
+        document.getElementById("customerTableBody").innerHTML = d
+          .map((item) => {
+            let bClass = "badge-bac";
+            let icon = "fa-medal";
+            if (item.tier === "Kim Cương") {
+              bClass = "badge-kimcuong";
+              icon = "fa-gem";
+            } else if (item.tier === "Vàng") {
+              bClass = "badge-vang";
+              icon = "fa-crown";
+            }
+            return `<tr><td>${item.id}</td><td><b>${item.name}</b></td><td>${item.phone}</td><td style="color:var(--danger); font-weight:bold;">${item.points}</td><td><span class="badge ${bClass}"><i class="fas ${icon}"></i> ${item.tier || "Bạc"}</span></td><td><button class="btn-warning btn-sm" onclick="editCustomer('${item.id}')"><i class="fas fa-pen"></i></button></td></tr>`;
+          })
           .join("");
       }
       function saveCustomer(e) {
@@ -2821,26 +2845,51 @@
 
       let editPromoId = null;
       function loadPromo() {
-        document.getElementById("promoTableBody").innerHTML = JSON.parse(
-          localStorage.getItem("promoData"),
-        )
-          .map(
-            (item) =>
-              `<tr><td><b>${item.code}</b></td><td>${item.name}</td><td>${item.type === "percent" ? "%" : "Tiền mặt"}</td><td style="color:var(--danger)">${item.value}</td><td><button class="btn-warning btn-sm" onclick="editPromo('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('promoData', '${item.id}')"><i class="fas fa-trash"></i></button></td></tr>`,
-          )
+        const today = new Date().toISOString().split("T")[0];
+        let d = JSON.parse(localStorage.getItem("promoData")) || [];
+        document.getElementById("promoTableBody").innerHTML = d
+          .map((item) => {
+            let statusObj = '<span class="badge badge-success">Còn hạn</span>';
+            if (item.start && today < item.start)
+              statusObj =
+                '<span class="badge badge-warning">Chưa tới hạn</span>';
+            if (item.end && today > item.end)
+              statusObj = '<span class="badge badge-danger">Hết hạn</span>';
+
+            return `<tr>
+                    <td><b>${item.code}</b></td>
+                    <td>${item.name}</td>
+                    <td>${item.type === "percent" ? "%" : "Tiền mặt"}</td>
+                    <td style="color:var(--danger); font-weight:bold;">${item.type === "percent" ? item.value + " %" : item.value.toLocaleString() + " đ"}</td>
+                    <td style="font-size:12px;">${item.start || "-"}</td>
+                    <td style="font-size:12px;">${item.end || "-"}</td>
+                    <td>${statusObj}</td>
+                    <td><button class="btn-warning btn-sm" onclick="editPromo('${item.id}')"><i class="fas fa-pen"></i></button> <button class="btn-danger btn-sm" onclick="deleteItem('promoData', '${item.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+          })
           .join("");
       }
+
       function savePromo(e) {
         e.preventDefault();
-        let d = JSON.parse(localStorage.getItem("promoData"));
+        let d = JSON.parse(localStorage.getItem("promoData")) || [];
         let code = document.getElementById("pr_code").value.toUpperCase();
+        let start = document.getElementById("pr_start").value;
+        let end = document.getElementById("pr_end").value;
+
+        if (start > end)
+          return alert("Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!");
+
         let obj = {
           id: editPromoId ? editPromoId : generateID("PR"),
           code: code,
           name: document.getElementById("pr_name").value,
           type: document.getElementById("pr_type").value,
           value: parseInt(document.getElementById("pr_value").value),
+          start: start,
+          end: end,
         };
+
         if (editPromoId) {
           let idx = d.findIndex((x) => x.id === editPromoId);
           d[idx] = obj;
@@ -2851,8 +2900,9 @@
         localStorage.setItem("promoData", JSON.stringify(d));
         closeModal("modalPromo");
         loadPromo();
-        alert("Lưu KM thành công!");
+        alert("Lưu Voucher thành công!");
       }
+
       function editPromo(id) {
         let d = JSON.parse(localStorage.getItem("promoData")).find(
           (x) => x.id === id,
@@ -2861,6 +2911,8 @@
         document.getElementById("pr_name").value = d.name;
         document.getElementById("pr_type").value = d.type;
         document.getElementById("pr_value").value = d.value;
+        document.getElementById("pr_start").value = d.start || "";
+        document.getElementById("pr_end").value = d.end || "";
         editPromoId = id;
         document.getElementById("modalPromoTitle").innerText = "Sửa Voucher";
         openModal("modalPromo");

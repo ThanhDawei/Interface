@@ -1,0 +1,875 @@
+{
+  "categoryData": [
+    { "id": "C1", "name": "Cà Phê" },
+    { "id": "C2", "name": "Trà Sữa" },
+    { "id": "C3", "name": "Trà Trái Cây" },
+    { "id": "C4", "name": "Nước Ép & Sinh Tố" },
+    { "id": "C5", "name": "Bánh Ngọt" },
+    { "id": "C6", "name": "Đồ Ăn Vặt" }
+  ],
+  "sizeData": [
+    { "id": "SZ1", "name": "S", "val": -10 },
+    { "id": "SZ2", "name": "M", "val": 0 },
+    { "id": "SZ3", "name": "L", "val": 20 }
+  ],
+  "toppingData": [
+    { "id": "TP1", "name": "Trân châu đen", "val": 5000 },
+    { "id": "TP2", "name": "Trân châu trắng", "val": 5000 },
+    { "id": "TP3", "name": "Kem Cheese", "val": 10000 },
+    { "id": "TP4", "name": "Pudding trứng", "val": 7000 },
+    { "id": "TP5", "name": "Đào miếng", "val": 10000 },
+    { "id": "TP6", "name": "Thạch trái cây", "val": 8000 }
+  ],
+  "tableData": [
+    { "id": "TB1", "name": "Mang đi (Takeaway)" },
+    { "id": "TB2", "name": "Giao hàng (Shopee/Grab)" },
+    { "id": "TB3", "name": "Bàn 01 (Tầng 1)" },
+    { "id": "TB4", "name": "Bàn 02 (Tầng 1)" },
+    { "id": "TB5", "name": "Bàn 03 (Tầng 1)" },
+    { "id": "TB6", "name": "Bàn 04 (Tầng 2)" },
+    { "id": "TB7", "name": "Bàn 05 (Tầng 2)" },
+    { "id": "TB8", "name": "Phòng VIP" }
+  ],
+  "supplierData": [
+    {
+      "id": "NCC-1",
+      "name": "Đại lý Cafe Trung Nguyên",
+      "phone": "0901111111",
+      "desc": "Cung cấp cafe hạt, bột cafe"
+    },
+    {
+      "id": "NCC-2",
+      "name": "Công ty Trà Lộc Phát",
+      "phone": "0902222222",
+      "desc": "Cung cấp trà đen, trà ô long, hồng trà"
+    },
+    {
+      "id": "NCC-3",
+      "name": "Siêu thị Bao bì Xanh",
+      "phone": "0903333333",
+      "desc": "Ly nhựa, ống hút, túi mang đi"
+    },
+    {
+      "id": "NCC-4",
+      "name": "Vựa Trái Cây Cô Ba",
+      "phone": "0904444444",
+      "desc": "Cam, Đào, Xoài, Dâu tươi"
+    }
+  ],
+  "inventoryData": [
+    {
+      "id": "KHO-1",
+      "name": "Cafe Hạt Arabica",
+      "qty": 15,
+      "unit": "kg",
+      "supplierId": "NCC-1"
+    },
+    {
+      "id": "KHO-2",
+      "name": "Trà Đen Túi Lọc",
+      "qty": 8,
+      "unit": "hộp",
+      "supplierId": "NCC-2"
+    },
+    {
+      "id": "KHO-3",
+      "name": "Sữa Đặc Ngôi Sao",
+      "qty": 20,
+      "unit": "hộp",
+      "supplierId": "NCC-1"
+    },
+    {
+      "id": "KHO-4",
+      "name": "Ly nhựa 500ml",
+      "qty": 450,
+      "unit": "cái",
+      "supplierId": "NCC-3"
+    },
+    {
+      "id": "KHO-5",
+      "name": "Cam Tươi",
+      "qty": 5,
+      "unit": "kg",
+      "supplierId": "NCC-4"
+    },
+    {
+      "id": "KHO-6",
+      "name": "Đào hộp",
+      "qty": 12,
+      "unit": "hộp",
+      "supplierId": "NCC-4"
+    },
+    {
+      "id": "KHO-7",
+      "name": "Đường cát",
+      "qty": 30,
+      "unit": "kg",
+      "supplierId": "NCC-1"
+    },
+    {
+      "id": "KHO-8",
+      "name": "Sữa Tươi TH",
+      "qty": 48,
+      "unit": "hộp",
+      "supplierId": "NCC-1"
+    },
+    {
+      "id": "KHO-9",
+      "name": "Trà Ô Long",
+      "qty": 9,
+      "unit": "gói",
+      "supplierId": "NCC-2"
+    },
+    {
+      "id": "KHO-10",
+      "name": "Ống hút",
+      "qty": 1000,
+      "unit": "cái",
+      "supplierId": "NCC-3"
+    }
+  ],
+  "menuData": [
+    {
+      "id": "M-1",
+      "name": "Cà Phê Đen Đá",
+      "category": "Cà Phê",
+      "price": 20000,
+      "recipe": "Cafe Hạt Arabica",
+      "image": "ICPDD.png"
+    },
+    {
+      "id": "M-2",
+      "name": "Bạc Xỉu",
+      "category": "Cà Phê",
+      "price": 25000,
+      "recipe": "Sữa Đặc Ngôi Sao",
+      "image": "IBX.png"
+    },
+    {
+      "id": "M-3",
+      "name": "Cà Phê Muối",
+      "category": "Cà Phê",
+      "price": 30000,
+      "recipe": "Cafe Hạt Arabica",
+      "image": "ICPM.png"
+    },
+    {
+      "id": "M-4",
+      "name": "Trà Sữa Truyền Thống",
+      "category": "Trà Sữa",
+      "price": 30000,
+      "recipe": "Trà Đen Túi Lọc",
+      "image": "ITSTT.png"
+    },
+    {
+      "id": "M-5",
+      "name": "Trà Sữa Ô Long",
+      "category": "Trà Sữa",
+      "price": 35000,
+      "recipe": "Trà Ô Long",
+      "image": "ITSOL.png"
+    },
+    {
+      "id": "M-6",
+      "name": "Trà Đào Cam Sả",
+      "category": "Trà Trái Cây",
+      "price": 35000,
+      "recipe": "Cam Tươi",
+      "image": "ITDCS.png"
+    },
+    {
+      "id": "M-7",
+      "name": "Trà Vải Nhiệt Đới",
+      "category": "Trà Trái Cây",
+      "price": 35000,
+      "recipe": "Trà Đen Túi Lọc",
+      "image": "ITVND.png"
+    },
+    {
+      "id": "M-8",
+      "name": "Trà Dâu Tây",
+      "category": "Trà Trái Cây",
+      "price": 40000,
+      "recipe": "Trà Ô Long",
+      "image": "ITDT.png"
+    },
+    {
+      "id": "M-9",
+      "name": "Nước Ép Cam",
+      "category": "Nước Ép & Sinh Tố",
+      "price": 30000,
+      "recipe": "Cam Tươi",
+      "image": "INEC.png"
+    },
+    {
+      "id": "M-10",
+      "name": "Sinh Tố Bơ",
+      "category": "Nước Ép & Sinh Tố",
+      "price": 40000,
+      "recipe": "Sữa Tươi TH",
+      "image": "ISTB.png"
+    },
+    {
+      "id": "M-11",
+      "name": "Bánh Tiramisu",
+      "category": "Bánh Ngọt",
+      "price": 40000,
+      "recipe": "",
+      "image": "IBT.png"
+    },
+    {
+      "id": "M-12",
+      "name": "Bánh Mousse Chanh Dây",
+      "category": "Bánh Ngọt",
+      "price": 45000,
+      "recipe": "",
+      "image": "IBMCD.png"
+    },
+    {
+      "id": "M-13",
+      "name": "Hướng Dương",
+      "category": "Đồ Ăn Vặt",
+      "price": 15000,
+      "recipe": "",
+      "image": "IHD.png"
+    },
+    {
+      "id": "M-14",
+      "name": "Khô Gà Lá Chanh",
+      "category": "Đồ Ăn Vặt",
+      "price": 25000,
+      "recipe": "",
+      "image": "IKGLC.png"
+    },
+    {
+      "id": "M-15",
+      "name": "Khoai Tây Chiên",
+      "category": "Đồ Ăn Vặt",
+      "price": 30000,
+      "recipe": "",
+      "image": "IKTC.png"
+    }
+  ],
+  "staffData": [
+    {
+      "id": "NV-1",
+      "name": "Hoàng Văn Quản Lý",
+      "phone": "0988000111",
+      "role": "Quản lý",
+      "wage": 40000
+    },
+    {
+      "id": "NV-2",
+      "name": "Trần Thị Thu Ngân 1",
+      "phone": "0988000222",
+      "role": "Thu ngân",
+      "wage": 22000
+    },
+    {
+      "id": "NV-3",
+      "name": "Lê Văn Pha Chế 1",
+      "phone": "0988000333",
+      "role": "Pha chế",
+      "wage": 25000
+    },
+    {
+      "id": "NV-4",
+      "name": "Phạm Thị Thu Ngân 2",
+      "phone": "0988000444",
+      "role": "Thu ngân",
+      "wage": 22000
+    },
+    {
+      "id": "NV-5",
+      "name": "Đặng Văn Pha Chế 2",
+      "phone": "0988000555",
+      "role": "Pha chế",
+      "wage": 25000
+    },
+    {
+      "id": "NV-6",
+      "name": "Ngô Văn Phục Vụ 1",
+      "phone": "0988000666",
+      "role": "Phục vụ",
+      "wage": 20000
+    },
+    {
+      "id": "NV-7",
+      "name": "Vũ Thị Phục Vụ 2",
+      "phone": "0988000777",
+      "role": "Phục vụ",
+      "wage": 20000
+    },
+    {
+      "id": "NV-8",
+      "name": "Chú Tư Bảo Vệ",
+      "phone": "0988000888",
+      "role": "Bảo vệ",
+      "wage": 18000
+    }
+  ],
+  "customerData": [
+    {
+      "id": "KH-1",
+      "name": "Anh Tuấn VIP",
+      "phone": "0909000111",
+      "points": 650,
+      "tier": "Kim Cương"
+    },
+    {
+      "id": "KH-2",
+      "name": "Chị Mai Giám Đốc",
+      "phone": "0909000222",
+      "points": 520,
+      "tier": "Kim Cương"
+    },
+    {
+      "id": "KH-3",
+      "name": "Bạn Huy Sinh Viên",
+      "phone": "0909000333",
+      "points": 315,
+      "tier": "Vàng"
+    },
+    {
+      "id": "KH-4",
+      "name": "Cô Lan Hàng Xóm",
+      "phone": "0909000444",
+      "points": 250,
+      "tier": "Vàng"
+    },
+    {
+      "id": "KH-5",
+      "name": "Anh Long",
+      "phone": "0909000555",
+      "points": 210,
+      "tier": "Vàng"
+    },
+    {
+      "id": "KH-6",
+      "name": "Chị Hoa",
+      "phone": "0909000666",
+      "points": 150,
+      "tier": "Bạc"
+    },
+    {
+      "id": "KH-7",
+      "name": "Em Trang",
+      "phone": "0909000777",
+      "points": 80,
+      "tier": "Bạc"
+    },
+    {
+      "id": "KH-8",
+      "name": "Anh Hưng",
+      "phone": "0909000888",
+      "points": 45,
+      "tier": "Bạc"
+    },
+    {
+      "id": "KH-9",
+      "name": "Chị Yến",
+      "phone": "0909000999",
+      "points": 20,
+      "tier": "Bạc"
+    },
+    {
+      "id": "KH-10",
+      "name": "Khách Vãng Lai 1",
+      "phone": "0909000000",
+      "points": 10,
+      "tier": "Bạc"
+    }
+  ],
+  "promoData": [
+    {
+      "id": "PR-1",
+      "code": "GIAM10K",
+      "name": "Giảm 10.000đ cho mọi đơn",
+      "type": "amount",
+      "value": 10000
+    },
+    {
+      "id": "PR-2",
+      "code": "SALE20",
+      "name": "Giảm 20% tri ân khách",
+      "type": "percent",
+      "value": 20
+    },
+    {
+      "id": "PR-3",
+      "code": "FREESHIP",
+      "name": "Hỗ trợ 15k phí vận chuyển",
+      "type": "amount",
+      "value": 15000
+    },
+    {
+      "id": "PR-4",
+      "code": "SINHNHAT",
+      "name": "Giảm 50% dịp sinh nhật quán",
+      "type": "percent",
+      "value": 50
+    }
+  ],
+  "salesData": [
+    {
+      "id": "HD-001",
+      "date": "3/6/2026, 8:15:00 AM",
+      "table": "Mang đi (Takeaway)",
+      "customerName": "Anh Tuấn VIP",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Cà Phê Đen Đá (Size L)", "qty": 2, "total": 48000 },
+        { "plainName": "Bánh Tiramisu (Size M)", "qty": 1, "total": 40000 }
+      ],
+      "total": 88000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-002",
+      "date": "3/6/2026, 11:30:00 AM",
+      "table": "Bàn 01 (Tầng 1)",
+      "customerName": "Khách lẻ",
+      "payment": "Tiền mặt",
+      "items": [
+        {
+          "plainName": "Trà Sữa Truyền Thống (Size M) + Trân châu đen",
+          "qty": 3,
+          "total": 105000
+        }
+      ],
+      "total": 105000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-003",
+      "date": "3/6/2026, 6:45:00 PM",
+      "table": "Bàn VIP",
+      "customerName": "Chị Mai Giám Đốc",
+      "payment": "Chuyển khoản",
+      "items": [
+        {
+          "plainName": "Trà Đào Cam Sả (Size L) + Đào miếng",
+          "qty": 4,
+          "total": 208000
+        },
+        { "plainName": "Khô Gà Lá Chanh (Size M)", "qty": 2, "total": 50000 }
+      ],
+      "total": 206400,
+      "discount": 51600,
+      "promo": "SALE20"
+    },
+    {
+      "id": "HD-004",
+      "date": "3/7/2026, 9:00:00 AM",
+      "table": "Bàn 02 (Tầng 1)",
+      "customerName": "Cô Lan Hàng Xóm",
+      "payment": "Tiền mặt",
+      "items": [{ "plainName": "Bạc Xỉu (Size S)", "qty": 2, "total": 45000 }],
+      "total": 35000,
+      "discount": 10000,
+      "promo": "GIAM10K"
+    },
+    {
+      "id": "HD-005",
+      "date": "3/7/2026, 3:20:00 PM",
+      "table": "Giao hàng (Shopee/Grab)",
+      "customerName": "Bạn Huy Sinh Viên",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Sinh Tố Bơ (Size M)", "qty": 1, "total": 40000 },
+        {
+          "plainName": "Trà Sữa Ô Long (Size M) + Kem Cheese",
+          "qty": 1,
+          "total": 45000
+        }
+      ],
+      "total": 70000,
+      "discount": 15000,
+      "promo": "FREESHIP"
+    },
+    {
+      "id": "HD-006",
+      "date": "3/8/2026, 7:30:00 AM",
+      "table": "Mang đi (Takeaway)",
+      "customerName": "Khách lẻ",
+      "payment": "Tiền mặt",
+      "items": [
+        { "plainName": "Cà Phê Muối (Size M)", "qty": 1, "total": 30000 }
+      ],
+      "total": 30000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-007",
+      "date": "3/8/2026, 12:15:00 PM",
+      "table": "Bàn 04 (Tầng 2)",
+      "customerName": "Anh Long",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Nước Ép Cam (Size L)", "qty": 2, "total": 72000 },
+        { "plainName": "Khoai Tây Chiên (Size M)", "qty": 1, "total": 30000 }
+      ],
+      "total": 102000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-008",
+      "date": "3/8/2026, 8:00:00 PM",
+      "table": "Bàn 03 (Tầng 1)",
+      "customerName": "Chị Yến",
+      "payment": "Tiền mặt",
+      "items": [
+        {
+          "plainName": "Trà Dâu Tây (Size M) + Trân châu trắng",
+          "qty": 2,
+          "total": 90000
+        }
+      ],
+      "total": 90000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-009",
+      "date": "3/9/2026, 10:10:00 AM",
+      "table": "Giao hàng (Shopee/Grab)",
+      "customerName": "Khách lẻ",
+      "payment": "Chuyển khoản",
+      "items": [
+        {
+          "plainName": "Trà Sữa Truyền Thống (Size L) + Pudding trứng",
+          "qty": 5,
+          "total": 215000
+        },
+        {
+          "plainName": "Bánh Mousse Chanh Dây (Size M)",
+          "qty": 3,
+          "total": 135000
+        }
+      ],
+      "total": 335000,
+      "discount": 15000,
+      "promo": "FREESHIP"
+    },
+    {
+      "id": "HD-010",
+      "date": "3/9/2026, 4:45:00 PM",
+      "table": "Bàn VIP",
+      "customerName": "Anh Tuấn VIP",
+      "payment": "Chuyển khoản",
+      "items": [
+        {
+          "plainName": "Trà Vải Nhiệt Đới (Size L)",
+          "qty": 3,
+          "total": 126000
+        },
+        { "plainName": "Hướng Dương (Size M)", "qty": 2, "total": 30000 }
+      ],
+      "total": 124800,
+      "discount": 31200,
+      "promo": "SALE20"
+    },
+    {
+      "id": "HD-011",
+      "date": "3/10/2026, 8:30:00 AM",
+      "table": "Mang đi (Takeaway)",
+      "customerName": "Khách lẻ",
+      "payment": "Tiền mặt",
+      "items": [
+        { "plainName": "Cà Phê Đen Đá (Size S)", "qty": 1, "total": 18000 }
+      ],
+      "total": 18000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-012",
+      "date": "3/10/2026, 1:20:00 PM",
+      "table": "Bàn 01 (Tầng 1)",
+      "customerName": "Chị Hoa",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Trà Đào Cam Sả (Size M)", "qty": 2, "total": 70000 },
+        { "plainName": "Bánh Tiramisu (Size M)", "qty": 1, "total": 40000 }
+      ],
+      "total": 100000,
+      "discount": 10000,
+      "promo": "GIAM10K"
+    },
+    {
+      "id": "HD-013",
+      "date": "3/10/2026, 7:15:00 PM",
+      "table": "Bàn 05 (Tầng 2)",
+      "customerName": "Em Trang",
+      "payment": "Tiền mặt",
+      "items": [
+        { "plainName": "Sinh Tố Bơ (Size L)", "qty": 2, "total": 96000 },
+        { "plainName": "Khô Gà Lá Chanh (Size M)", "qty": 1, "total": 25000 }
+      ],
+      "total": 121000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-014",
+      "date": "3/11/2026, 9:05:00 AM",
+      "table": "Giao hàng (Shopee/Grab)",
+      "customerName": "Anh Hưng",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Cà Phê Muối (Size L)", "qty": 3, "total": 108000 }
+      ],
+      "total": 93000,
+      "discount": 15000,
+      "promo": "FREESHIP"
+    },
+    {
+      "id": "HD-015",
+      "date": "3/11/2026, 11:50:00 AM",
+      "table": "Bàn 02 (Tầng 1)",
+      "customerName": "Khách Vãng Lai 1",
+      "payment": "Tiền mặt",
+      "items": [
+        { "plainName": "Trà Sữa Ô Long (Size S)", "qty": 1, "total": 31500 },
+        {
+          "plainName": "Trà Sữa Truyền Thống (Size M)",
+          "qty": 1,
+          "total": 30000
+        }
+      ],
+      "total": 61500,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-016",
+      "date": "3/11/2026, 3:30:00 PM",
+      "table": "Bàn VIP",
+      "customerName": "Chị Mai Giám Đốc",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Nước Ép Cam (Size M)", "qty": 4, "total": 120000 },
+        {
+          "plainName": "Bánh Mousse Chanh Dây (Size M)",
+          "qty": 2,
+          "total": 90000
+        }
+      ],
+      "total": 168000,
+      "discount": 42000,
+      "promo": "SALE20"
+    },
+    {
+      "id": "HD-017",
+      "date": "3/11/2026, 8:45:00 PM",
+      "table": "Mang đi (Takeaway)",
+      "customerName": "Bạn Huy Sinh Viên",
+      "payment": "Tiền mặt",
+      "items": [
+        {
+          "plainName": "Trà Đào Cam Sả (Size L) + Trân châu trắng",
+          "qty": 1,
+          "total": 47000
+        }
+      ],
+      "total": 47000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-018",
+      "date": "3/12/2026, 8:10:00 AM",
+      "table": "Bàn 01 (Tầng 1)",
+      "customerName": "Trần Khách Quen",
+      "payment": "Chuyển khoản",
+      "items": [
+        { "plainName": "Cà Phê Đen Đá (Size M)", "qty": 2, "total": 40000 },
+        { "plainName": "Bạc Xỉu (Size M)", "qty": 1, "total": 25000 }
+      ],
+      "total": 65000,
+      "discount": 0,
+      "promo": ""
+    },
+    {
+      "id": "HD-019",
+      "date": "3/12/2026, 1:00:00 PM",
+      "table": "Giao hàng (Shopee/Grab)",
+      "customerName": "Lê Khách Mới",
+      "payment": "Chuyển khoản",
+      "items": [
+        {
+          "plainName": "Trà Sữa Truyền Thống (Size L) + Kem Cheese",
+          "qty": 2,
+          "total": 92000
+        }
+      ],
+      "total": 77000,
+      "discount": 15000,
+      "promo": "FREESHIP"
+    },
+    {
+      "id": "HD-020",
+      "date": "3/12/2026, 4:30:00 PM",
+      "table": "Bàn 03 (Tầng 1)",
+      "customerName": "Khách lẻ",
+      "payment": "Tiền mặt",
+      "items": [
+        { "plainName": "Sinh Tố Bơ (Size M)", "qty": 1, "total": 40000 },
+        { "plainName": "Khoai Tây Chiên (Size M)", "qty": 1, "total": 30000 }
+      ],
+      "total": 60000,
+      "discount": 10000,
+      "promo": "GIAM10K"
+    }
+  ],
+  "shiftData": [
+    {
+      "id": "CA-1",
+      "date": "2026-03-10",
+      "staffId": "NV-2",
+      "staffName": "Trần Thị Thu Ngân 1",
+      "type": "Ca Sáng",
+      "hours": 6
+    },
+    {
+      "id": "CA-2",
+      "date": "2026-03-10",
+      "staffId": "NV-3",
+      "staffName": "Lê Văn Pha Chế 1",
+      "type": "Ca Sáng",
+      "hours": 6
+    },
+    {
+      "id": "CA-3",
+      "date": "2026-03-10",
+      "staffId": "NV-4",
+      "staffName": "Phạm Thị Thu Ngân 2",
+      "type": "Ca Chiều",
+      "hours": 6
+    },
+    {
+      "id": "CA-4",
+      "date": "2026-03-10",
+      "staffId": "NV-5",
+      "staffName": "Đặng Văn Pha Chế 2",
+      "type": "Ca Chiều",
+      "hours": 6
+    },
+    {
+      "id": "CA-5",
+      "date": "2026-03-11",
+      "staffId": "NV-2",
+      "staffName": "Trần Thị Thu Ngân 1",
+      "type": "Ca Sáng",
+      "hours": 6
+    },
+    {
+      "id": "CA-6",
+      "date": "2026-03-11",
+      "staffId": "NV-3",
+      "staffName": "Lê Văn Pha Chế 1",
+      "type": "Ca Sáng",
+      "hours": 6
+    },
+    {
+      "id": "CA-7",
+      "date": "2026-03-11",
+      "staffId": "NV-4",
+      "staffName": "Phạm Thị Thu Ngân 2",
+      "type": "Ca Chiều",
+      "hours": 6
+    },
+    {
+      "id": "CA-8",
+      "date": "2026-03-11",
+      "staffId": "NV-5",
+      "staffName": "Đặng Văn Pha Chế 2",
+      "type": "Ca Chiều",
+      "hours": 6
+    },
+    {
+      "id": "CA-9",
+      "date": "2026-03-12",
+      "staffId": "NV-2",
+      "staffName": "Trần Thị Thu Ngân 1",
+      "type": "Ca Sáng",
+      "hours": 6
+    },
+    {
+      "id": "CA-10",
+      "date": "2026-03-12",
+      "staffId": "NV-3",
+      "staffName": "Lê Văn Pha Chế 1",
+      "type": "Ca Sáng",
+      "hours": 6
+    }
+  ],
+  "shiftCloseData": [
+    {
+      "id": "CHOT-1",
+      "date": "3/10/2026, 2:05:00 PM",
+      "staff": "Trần Thị Thu Ngân 1",
+      "shift": "Ca Sáng",
+      "money": 850000
+    },
+    {
+      "id": "CHOT-2",
+      "date": "3/10/2026, 10:10:00 PM",
+      "staff": "Phạm Thị Thu Ngân 2",
+      "shift": "Ca Chiều",
+      "money": 1200000
+    },
+    {
+      "id": "CHOT-3",
+      "date": "3/11/2026, 2:00:00 PM",
+      "staff": "Trần Thị Thu Ngân 1",
+      "shift": "Ca Sáng",
+      "money": 1150000
+    },
+    {
+      "id": "CHOT-4",
+      "date": "3/11/2026, 10:05:00 PM",
+      "staff": "Phạm Thị Thu Ngân 2",
+      "shift": "Ca Chiều",
+      "money": 1850000
+    }
+  ],
+  "kitchenData": [
+    {
+      "id": "HD-10005",
+      "date": "3/12/2026, 5:10:00 PM",
+      "table": "Bàn 04 (Tầng 2)",
+      "items": [
+        {
+          "htmlName": "<b>Trà Sữa Truyền Thống</b> (Size L)<br><small style=\"color:#7f8c8d\">+ Trân châu đen</small>",
+          "qty": 2
+        },
+        { "htmlName": "<b>Hướng Dương</b> (Size M)", "qty": 1 }
+      ]
+    },
+    {
+      "id": "HD-10006",
+      "date": "3/12/2026, 5:12:00 PM",
+      "table": "Giao hàng (Shopee/Grab)",
+      "items": [
+        { "htmlName": "<b>Cà Phê Muối</b> (Size M)", "qty": 3 },
+        { "htmlName": "<b>Bánh Tiramisu</b> (Size M)", "qty": 1 }
+      ]
+    },
+    {
+      "id": "HD-10007",
+      "date": "3/12/2026, 5:15:00 PM",
+      "table": "Mang đi (Takeaway)",
+      "items": [
+        {
+          "htmlName": "<b>Trà Đào Cam Sả</b> (Size M)<br><small style=\"color:#7f8c8d\">+ Đào miếng</small>",
+          "qty": 1
+        }
+      ]
+    }
+  ]
+}
